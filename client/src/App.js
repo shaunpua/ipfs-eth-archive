@@ -1,9 +1,12 @@
 import React,  {useState, useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route} from 'react-router-dom';
 import SimpleStorageContract from "./contracts/SimpleStorage.json";
 import getWeb3 from "./getWeb3";
 import BlockchainContext from "./BlockchainContext";
 import AuthPage from "./components/AuthPage";
 import "./App.css";
+import LoginPage from "./components/LoginPage";
+import RegisterPage from "./components/RegisterPage";
 
 
 function App() {
@@ -77,7 +80,11 @@ function App() {
   return (
       <div className="App">
         <BlockchainContext.Provider value={{web3, accounts, contract}}>
-          <h1>Good to Go!</h1>
+          
+          
+          <Router>
+          <Routes>
+            <Route exact path="/" element={<div><h1>Good to Go!</h1>
           <p>Your Truffle Box is installed and ready.</p>
           <h2>Smart Contract Example</h2>
           <p>
@@ -87,9 +94,16 @@ function App() {
           <p>
             Try changing the value stored on <strong>line 42</strong> of App.js.
           </p>
-          <AuthPage/>
-          <div>The stored value is: {storageValue}</div>
           
+          <div>The stored value is: {storageValue}</div></div>}/>
+            
+            <Route path="/auth" element={<AuthPage/>}/>
+            <Route path="/login" element={<LoginPage/>}/>
+            <Route path="/register" element={<RegisterPage/>}/>
+            <Route exact path="*" element={<p>Error no page found</p>}/>
+              
+          </Routes>
+          </Router>
         </BlockchainContext.Provider>
     </div>
   );
