@@ -26,7 +26,6 @@ contract SimpleStorage {
         address addr;
         string name;
         string password;
-        string CNIC;
         bool isUserLoggedIn;
     }
 
@@ -108,14 +107,12 @@ contract SimpleStorage {
     function register(
         address _address,
         string memory _name,
-        string memory _password,
-        string memory _cnic
+        string memory _password
     ) public returns (bool) {
         require(user[_address].addr != msg.sender);
         user[_address].addr = _address;
         user[_address].name = _name;
         user[_address].password = _password;
-        user[_address].CNIC = _cnic;
         user[_address].isUserLoggedIn = false;
         return true;
     }
