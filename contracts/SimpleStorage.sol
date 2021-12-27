@@ -159,7 +159,7 @@ contract SimpleStorage {
         temp.transactionType = _transactionType;
         temp.changeLevel = _changeLevel;
         transactions.push(temp);
-
+        transactionCount++;
         emit transactionAdded(temp);
         /*
         emit transactionAdded(

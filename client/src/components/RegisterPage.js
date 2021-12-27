@@ -5,8 +5,8 @@ import BlockchainContext from "../BlockchainContext";
 function RegisterPage() {
     const [address, setaddress] = useState(null)
     const [username, setUsername] = useState('');
-    const [password, setpassword] = useState('');
-    const [passwordC, setpasswordC] = useState('');
+    const [password, setPassword] = useState('');
+    const [passwordC, setPasswordC] = useState('');
     const navigate = useNavigate();
 
     const BlockchainContextImport =  useContext(BlockchainContext)
@@ -29,13 +29,26 @@ function RegisterPage() {
         return true;
     }
 
-    const registerSubmit = (e) => {
+    
+
+    const registerSubmit = async (e) => {
         e.preventDefault();
 
         console.log(username, password);
         const formVal = formValidation(username, password, passwordC);
         if (formVal === true){
-            navigate('/auth');
+            try {
+                await contract.methods.register(accounts[0],username, password).send({ from: accounts[0] });
+                // const registerCAll = await contract.methods.register(accounts[0],username, password).call();
+
+                // console.log(registerCAll, 'register CALL here')
+                navigate('/auth');
+            } catch (err){
+                console.log(err)
+                alert('User already registered with this account!')
+                
+            }
+            
         } else {
             alert('Wrong register input details!')
         }
@@ -58,14 +71,14 @@ function RegisterPage() {
             type="password" 
             required 
             value={password}
-            onChange={(e) => setpassword(e.target.value)}
+            onChange={(e) => setPassword(e.target.value)}
             />
             <label>Confirm Password</label>
             <input 
             type="password" 
             required 
             value={passwordC}
-            onChange={(e) => setpasswordC(e.target.value)}
+            onChange={(e) => setPasswordC(e.target.value)}
             />
             <button>Register</button>
             </form>
