@@ -3,11 +3,12 @@ import { BrowserRouter as Router, Routes, Route} from 'react-router-dom';
 import SimpleStorageContract from "./contracts/SimpleStorage.json";
 import getWeb3 from "./getWeb3";
 import BlockchainContext from "./BlockchainContext";
-import AuthPage from "./components/AuthPage";
+import AuthPage from "./pages/AuthPage";
 import "./App.css";
-import LoginPage from "./components/LoginPage";
-import RegisterPage from "./components/RegisterPage";
-import HomePage from "./components/HomePage";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
+import HomePage from "./pages/HomePage";
+// import NavbarAuth from "./pages/NavbarAuth";
 
 
 function App() {
@@ -80,6 +81,7 @@ function App() {
 
   return (
       <div className="App">
+      {/* <NavbarAuth/> */} 
         <BlockchainContext.Provider value={{web3, accounts, contract}}>
           
           

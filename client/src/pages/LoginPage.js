@@ -1,6 +1,7 @@
 import React, {useContext, useEffect, useState} from "react";
 import { Link, useNavigate } from "react-router-dom";
 import BlockchainContext from "../BlockchainContext";
+import NavBar1 from "./components/Navbar1"
 
 function LoginPage() {
     const [password, setPassword] = useState('');
@@ -57,22 +58,38 @@ function LoginPage() {
         
     }
     return (
-        <div>
-        
+        <div className="LoginPage">
+            <NavBar1/>
+            <div className="login-container">
             <h2>Login</h2>
+            <hr className="form-break" />
             <form onSubmit={loginSubmit}>
-            <label>Your address {accounts[0]}</label>
+            <label style={{fontWeight: '450'}}>Your current address is {accounts[0]}</label>
+            <br/>
+                <div className="form-input" style={{marginTop: '20px'}}>
+                    <label>Password</label>
+                    <input 
+                    type="password" 
+                    required 
+                    value={password}
+                    className="auth-input"
+                    placeholder="Enter Password"
+                    onChange={(e) => setPassword(e.target.value)}
+                    />
+                        
+                </div>
+           
             
-            <label>Password</label>
-            <input 
-            type="password" 
-            required 
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            />
-            
-            <button>Login </button>
+                <button className="register-button">Login </button>
+                <div class="form-redirect">
+                        <span>Dont have an account yet?</span>
+                        
+                        <Link to="/register">Register</Link>
+                    </div>
             </form>
+
+            </div>
+           
         
              {/* <Link to="/">Login Button </Link> */}
         </div>

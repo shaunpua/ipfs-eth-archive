@@ -1,13 +1,229 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,600;0,700;0,800;0,900;1,300&display=swap");
+
+:root {
+  --primary1: #2145c5;
+  --primaryViolet: #6b77e8;
+  --primaryLightViolet: #7984eb;
+  --primary2: rgb(24, 24, 24);
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
+.App {
+  height: 100vh;
+  width: 100vw;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Roboto", sans-serif;
+}
+button:hover {
+  cursor: pointer;
+}
+
+.App {
+  text-align: center;
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #09d3ac;
+}
+
+.nav-auth {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 70px;
+  width: 100%;
+  border-bottom: 2px solid rgb(204, 204, 204);
+}
+
+.nav-auth-logo {
+  height: 40px;
+  width: auto;
+}
+
+.nav-auth-title {
+  margin-left: 5px;
+  font-weight: 1000;
+  font-size: 1.75rem;
+}
+
+.AuthPage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.auth-container {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: center;
+  margin-top: 100px;
+  width: 350px;
+}
+
+/* .auth-container-button {
+  color: white;
+  background-color: --primaryViolet;
+  width: 100%;
+  text-decoration: none;
+  margin: 20px 0px;
+  padding: 8px 40px;
+  font-size: 0.9rem;
+
+
+
+} */
+
+.auth-container-label {
+  font-weight: 300;
+  font-size: 1.25rem;
+}
+
+.RegisterPage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.register-container {
+  height: auto;
+  width: 400px;
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+  padding: 40px 30px;
+  font-family: "Montserrat", sans-serif;
+  margin-top: 30px;
+}
+
+.form-break {
+  height: 2px;
+  border-width: 0;
+  color: rgb(54, 54, 54);
+  background-color: gray;
+  margin: 30px 0 40px 0;
+}
+
+/* .register-button {
+  color: white;
+  background-color: var(--primaryViolet);
+  width: 100%;
+  text-decoration: none;
+  margin: 20px 0px;
+  padding: 8px 40px;
+  border-radius: 8px;
+  border: 0px;
+  font-size: 0.9rem;
+} */
+
+.register-button {
+  width: 100%;
+  padding: 10px 0;
+  /* background-color: var(--primaryViolet); */
+  background-color: #5562da;
+
+  color: white;
+  font-size: 20px;
+  font-family: inherit;
+  font-weight: 700;
+  border-radius: 5px;
+  border: 0px;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+.register-button:hover {
+  background-color: #5c6ae4;
+}
+
+.form-input {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  padding-bottom: 20px;
+  position: relative;
+}
+
+.form-input label {
+  display: inline-block;
+  margin-bottom: 5px;
+}
+
+.form-input input {
+  border: 2px solid #f0f0f0;
+  border-radius: 4px;
+  display: block;
+  font-family: inherit;
+  font-size: 14px;
+  padding: 10px;
+  width: 100%;
+}
+
+.form-input input:focus {
+  outline: 0;
+  border-color: #777;
+}
+/* .auth-input {
+  border-radius: 0.1875em;
+  border: .1px solid gray;
+  background-color: #eee;
+  color: #777;
+  padding: 0.25em 0.625em;
+  width: 100%;
+} */
+
+.LoginPage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.login-container {
+  height: auto;
+  width: 500px;
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+  padding: 40px 30px;
+  font-family: "Montserrat", sans-serif;
+  margin-top: 30px;
+}
+
+.form-redirect {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin-top: 30px;
+}
+
+.form-redirect span {
+  font-size: 14px;
+  font-weight: 600;
+  color: rgb(58, 58, 58);
+}
+
+.form-redirect a {
+  margin-left: 5px;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  color: var(--darkblueprimary);
 }
