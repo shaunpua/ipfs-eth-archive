@@ -21,6 +21,8 @@
 
 body {
   font-family: "Roboto", sans-serif;
+  overflow-y: hidden; /* Hide vertical scrollbar */
+  overflow-x: hidden;
 }
 button:hover {
   cursor: pointer;
@@ -226,4 +228,107 @@ button:hover {
   font-weight: 700;
   text-decoration: none;
   color: var(--darkblueprimary);
+}
+
+.HomePage {
+  display: flex;
+  flex-direction: column;
+}
+
+.nav-home {
+  height: 50px;
+  width: 100%;
+  border-bottom: 0.25px solid rgb(204, 204, 204);
+  display: flex;
+}
+
+.nav-home-left {
+  flex: 50%;
+  height: 50px;
+  display: flex;
+  align-items: center;
+}
+
+.nav-home-right {
+  flex: 50%;
+  margin-left: 25px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.nav-home-logo {
+  margin-left: 15px;
+  height: 28px;
+  width: auto;
+}
+
+.nav-home-title {
+  margin-left: 5px;
+  font-size: 1.2rem;
+  color: rgb(34, 32, 32);
+  font-weight: 700;
+}
+
+.nav-home-account {
+  margin-left: 5px;
+  font-size: 0.8rem;
+  color: rgb(34, 32, 32);
+  font-weight: 500;
+}
+
+.logout-button {
+  width: 70px;
+  padding: 8px 0;
+  background-color: #5562da;
+  color: white;
+  font-size: 0.8rem;
+  font-family: Montserrat;
+  font-weight: 700;
+  border-radius: 5px;
+  border: 0px;
+  margin: 0 15px;
+}
+
+.logout-button:hover {
+  background-color: #5c6ae4;
+}
+
+.home-container {
+  display: flex;
+  justify-content: start;
+  height: 100%;
+}
+
+.sidebar {
+  min-height: 100vh;
+  width: 180px;
+  background-color: #fafaf8;
+  border-right: 0.25px solid rgb(204, 204, 204);
+  display: flex;
+  padding: 20px 0 0 25px;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.sidebar-link {
+  margin-top: 20px;
+  text-decoration: none;
+  color: gray;
+  font-weight: 400;
+}
+
+.sidebar-link:hover {
+  color: rgb(29, 29, 29);
+}
+
+.sidebar-link:active {
+  color: rgb(29, 29, 29);
+}
+
+.sidebar-end {
+  margin-top: 380px;
+  font-size: 0.7rem;
+  color: gray;
 }

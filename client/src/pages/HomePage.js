@@ -1,6 +1,9 @@
 import React,  {useState, useEffect, useContext} from "react";
 import {useNavigate } from "react-router-dom";
 import BlockchainContext from "../BlockchainContext";
+import NavBar2 from "./components/Navbar2"
+import Sidebar from "./components/Sidebar";
+
 
 function HomePage() {
     const [storageValue, setStorageValue] = useState(0);
@@ -58,26 +61,15 @@ function HomePage() {
       }, [web3, accounts, contract])
 
 
-    const logoutSubmit = async () => {
-        try {
-          // const loginCAll = await contract.methods.login(accounts[0], password).call();
-          await contract.methods.logout(accounts[0]).send({ from: accounts[0] });
-                
-            
-                
-            navigate('/auth');
-                
-                
-        } catch (err){
-            console.log(err)
-            alert('Error logout account to blockchain!')
-                
-          }
-    }
+    
 
 
     return (
-        <div>
+        <div className="HomePage">
+          <NavBar2/>
+          <div className="home-container">
+            <Sidebar/>
+            <div className="home-content">
             <h1>Good to Go!</h1>
           <p>Your Truffle Box is installed and ready.</p>
           <h2>Smart Contract Example</h2>
@@ -91,7 +83,10 @@ function HomePage() {
           
           <div>The stored value is: {storageValue}</div>
           <div>Contract name is  {contractname}</div>
-         <button onClick={logoutSubmit}>Logout</button>
+            </div>
+          </div>
+           
+         
         </div>
     )
 }
