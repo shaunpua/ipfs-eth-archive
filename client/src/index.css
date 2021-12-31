@@ -295,12 +295,6 @@ button:hover {
   background-color: #5c6ae4;
 }
 
-.home-container {
-  display: flex;
-  justify-content: start;
-  height: 100%;
-}
-
 .sidebar {
   min-height: 100vh;
   width: 180px;
@@ -331,4 +325,57 @@ button:hover {
   margin-top: 380px;
   font-size: 0.7rem;
   color: gray;
+}
+
+.home-container {
+  display: flex;
+  justify-content: start;
+  height: 100%;
+}
+
+.home-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.home-files-container {
+  background-color: #fafaf8;
+  width: 1000px;
+  height: 100vh;
+}
+.modal-background {
+  width: 100%;
+  height: 100%;
+
+  /* background-color: rgba(200, 200, 200);
+  opacity: 0.5; */
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
+}
+
+.modal-container {
+  position: relative;
+  opacity: 1;
+  height: auto;
+  width: 400px;
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+  padding: 20px 30px 40px 30px;
+  font-family: "Montserrat", sans-serif;
+  margin-top: 30px;
+  z-index: 2;
+}
+
+.modal-close-button {
+  margin-left: 300px;
+  background-color: transparent;
+  border: none;
+  font-size: 25px;
 }

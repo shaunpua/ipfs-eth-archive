@@ -3,11 +3,12 @@ import {useNavigate } from "react-router-dom";
 import BlockchainContext from "../BlockchainContext";
 import NavBar2 from "./components/Navbar2"
 import Sidebar from "./components/Sidebar";
-
+import AddFileModal from "./components/AddFileModal";
 
 function HomePage() {
     const [storageValue, setStorageValue] = useState(0);
     const [contractname, setContractname] = useState('');
+    const [openmodal, setOpenmodal] = useState(false);
     const [loggedIn, setLoggedIn] = useState(false)
     const navigate = useNavigate();
 
@@ -70,7 +71,13 @@ function HomePage() {
           <div className="home-container">
             <Sidebar/>
             <div className="home-content">
-            <h1>Good to Go!</h1>
+              <h2>ArchStorage</h2>
+              <button className="logout-button" onClick={()=> {setOpenmodal(true)}}>Create +</button>
+              <div className="home-files-container">
+                {openmodal && <AddFileModal closeModal={setOpenmodal}/>}
+                
+              </div>
+            {/* <h1>Good to Go!</h1>
           <p>Your Truffle Box is installed and ready.</p>
           <h2>Smart Contract Example</h2>
           <p>
@@ -82,7 +89,7 @@ function HomePage() {
           </p>
           
           <div>The stored value is: {storageValue}</div>
-          <div>Contract name is  {contractname}</div>
+          <div>Contract name is  {contractname}</div> */}
             </div>
           </div>
            
