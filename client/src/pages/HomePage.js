@@ -7,6 +7,7 @@ import AddFileModal from "./components/AddFileModal";
 
 function HomePage() {
     const [storageValue, setStorageValue] = useState(0);
+    const [filecount, setFilecount] = useState(null);
     const [contractname, setContractname] = useState('');
     const [openmodal, setOpenmodal] = useState(false);
     const [loggedIn, setLoggedIn] = useState(false)
@@ -14,7 +15,7 @@ function HomePage() {
 
     const BlockchainContextImport =  useContext(BlockchainContext)
     const {web3, contract, accounts} = BlockchainContextImport;
-    console.log('context provider data ',web3, contract, accounts[0]);
+    // console.log('context provider data ',web3, contract, accounts[0]);
 
     useEffect(()=>{
         const load = async () => {
@@ -25,7 +26,7 @@ function HomePage() {
                 
                 console.log(loggedIn, 'login state 2')
                  if (checkLogin === true){
-                   setLoggedIn(true)
+                   setLoggedIn(true);
                  } else {
                    navigate('/auth');
                  }
@@ -41,6 +42,10 @@ function HomePage() {
 
           contract.methods.name().call(function(err,res){
             setContractname(res);
+          });
+
+          contract.methods.fileCount().call(function(err,res){
+            setFilecount(res);
           });
           
           // Get the value from the contract to prove it worked.
@@ -68,13 +73,147 @@ function HomePage() {
     return (
         <div className="HomePage">
           <NavBar2/>
+          {openmodal && <AddFileModal closeModal={setOpenmodal}/>}
           <div className="home-container">
             <Sidebar/>
             <div className="home-content">
-              <h2>ArchStorage</h2>
-              <button className="logout-button" onClick={()=> {setOpenmodal(true)}}>Create +</button>
+            
+              <h2>ArchStorage / All Files</h2>
+              <h3>File count is: {filecount}</h3>
+              <button className="upload-button" onClick={()=> {setOpenmodal(true)}}>Create +</button>
+              <div className="home-file-descriptions">
+                  <p>ID</p>
+                  <p>Name</p>
+                  <p>Description</p>
+                  <p>Type</p>
+                  <p>Size</p>
+                  <p>Date</p>
+                  <p>Uploader</p>
+                  <p>Hash</p>
+              </div>
+              
               <div className="home-files-container">
-                {openmodal && <AddFileModal closeModal={setOpenmodal}/>}
+                <div className="file-section">
+                  <p>2</p>
+                  <p>Document-test-upload.txt</p>
+                  <p>This is a file for testing </p>
+                  <p>doc/doc.x</p>
+                  <p>254 bytes</p>
+                  <p>9:14:01 PM 12/21/2021</p>
+                  <p>0x331E51CE3c5C8ec98F62320F60Ec70527AbD05e3</p>
+                  <p>bafybeib4hiir6zli7ac67edjraiw352chq5hpmmxobswrmer2etmzmx37a</p>
+                </div>
+                <div className="file-section">
+                  <p>2</p>
+                  <p>Document-test-upload.txt</p>
+                  <p>This is a file for testing </p>
+                  <p>doc/doc.x</p>
+                  <p>254 bytes</p>
+                  <p>9:14:01 PM 12/21/2021</p>
+                  <p>0x331E51CE3c5C8ec98F62320F60Ec70527AbD05e3</p>
+                  <p>bafybeib4hiir6zli7ac67edjraiw352chq5hpmmxobswrmer2etmzmx37a</p>
+                </div>
+                <div className="file-section">
+                  <p>2</p>
+                  <p>Document-test-upload.txt</p>
+                  <p>This is a file for testing </p>
+                  <p>doc/doc.x</p>
+                  <p>254 bytes</p>
+                  <p>9:14:01 PM 12/21/2021</p>
+                  <p>0x331E51CE3c5C8ec98F62320F60Ec70527AbD05e3</p>
+                  <p>bafybeib4hiir6zli7ac67edjraiw352chq5hpmmxobswrmer2etmzmx37a</p>
+                </div>
+                <div className="file-section">
+                  <p>2</p>
+                  <p>Document-test-upload.txt</p>
+                  <p>This is a file for testing </p>
+                  <p>doc/doc.x</p>
+                  <p>254 bytes</p>
+                  <p>9:14:01 PM 12/21/2021</p>
+                  <p>0x331E51CE3c5C8ec98F62320F60Ec70527AbD05e3</p>
+                  <p>bafybeib4hiir6zli7ac67edjraiw352chq5hpmmxobswrmer2etmzmx37a</p>
+                </div>
+                <div className="file-section">
+                  <p>2</p>
+                  <p>Document-test-upload.txt</p>
+                  <p>This is a file for testing </p>
+                  <p>doc/doc.x</p>
+                  <p>254 bytes</p>
+                  <p>9:14:01 PM 12/21/2021</p>
+                  <p>0x331E51CE3c5C8ec98F62320F60Ec70527AbD05e3</p>
+                  <p>bafybeib4hiir6zli7ac67edjraiw352chq5hpmmxobswrmer2etmzmx37a</p>
+                </div>
+                <div className="file-section">
+                  <p>2</p>
+                  <p>Document-test-upload.txt</p>
+                  <p>This is a file for testing </p>
+                  <p>doc/doc.x</p>
+                  <p>254 bytes</p>
+                  <p>9:14:01 PM 12/21/2021</p>
+                  <p>0x331E51CE3c5C8ec98F62320F60Ec70527AbD05e3</p>
+                  <p>bafybeib4hiir6zli7ac67edjraiw352chq5hpmmxobswrmer2etmzmx37a</p>
+                </div>
+                <div className="file-section">
+                  <p>2</p>
+                  <p>Document-test-upload.txt</p>
+                  <p>This is a file for testing </p>
+                  <p>doc/doc.x</p>
+                  <p>254 bytes</p>
+                  <p>9:14:01 PM 12/21/2021</p>
+                  <p>0x331E51CE3c5C8ec98F62320F60Ec70527AbD05e3</p>
+                  <p>bafybeib4hiir6zli7ac67edjraiw352chq5hpmmxobswrmer2etmzmx37a</p>
+                </div>
+                <div className="file-section">
+                  <p>2</p>
+                  <p>Document-test-upload.txt</p>
+                  <p>This is a file for testing </p>
+                  <p>doc/doc.x</p>
+                  <p>254 bytes</p>
+                  <p>9:14:01 PM 12/21/2021</p>
+                  <p>0x331E51CE3c5C8ec98F62320F60Ec70527AbD05e3</p>
+                  <p>bafybeib4hiir6zli7ac67edjraiw352chq5hpmmxobswrmer2etmzmx37a</p>
+                </div>
+                <div className="file-section">
+                  <p>2</p>
+                  <p>Document-test-upload.txt</p>
+                  <p>This is a file for testing </p>
+                  <p>doc/doc.x</p>
+                  <p>254 bytes</p>
+                  <p>9:14:01 PM 12/21/2021</p>
+                  <p>0x331E51CE3c5C8ec98F62320F60Ec70527AbD05e3</p>
+                  <p>bafybeib4hiir6zli7ac67edjraiw352chq5hpmmxobswrmer2etmzmx37a</p>
+                </div>
+                <div className="file-section">
+                  <p>2</p>
+                  <p>Document-test-upload.txt</p>
+                  <p>This is a file for testing </p>
+                  <p>doc/doc.x</p>
+                  <p>254 bytes</p>
+                  <p>9:14:01 PM 12/21/2021</p>
+                  <p>0x331E51CE3c5C8ec98F62320F60Ec70527AbD05e3</p>
+                  <p>bafybeib4hiir6zli7ac67edjraiw352chq5hpmmxobswrmer2etmzmx37a</p>
+                </div>
+                <div className="file-section">
+                  <p>2</p>
+                  <p>Document-test-upload.txt</p>
+                  <p>This is a file for testing </p>
+                  <p>doc/doc.x</p>
+                  <p>254 bytes</p>
+                  <p>9:14:01 PM 12/21/2021</p>
+                  <p>0x331E51CE3c5C8ec98F62320F60Ec70527AbD05e3</p>
+                  <p>bafybeib4hiir6zli7ac67edjraiw352chq5hpmmxobswrmer2etmzmx37a</p>
+                </div>
+                <div className="file-section">
+                  <p>2</p>
+                  <p>Document-test-upload.txt</p>
+                  <p>This is a file for testing </p>
+                  <p>doc/doc.x</p>
+                  <p>254 bytes</p>
+                  <p>9:14:01 PM 12/21/2021</p>
+                  <p>0x331E51CE3c5C8ec98F62320F60Ec70527AbD05e3</p>
+                  <p>bafybeib4hiir6zli7ac67edjraiw352chq5hpmmxobswrmer2etmzmx37a</p>
+                </div>
+                
                 
               </div>
             {/* <h1>Good to Go!</h1>

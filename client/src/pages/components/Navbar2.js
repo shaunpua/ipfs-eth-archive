@@ -9,7 +9,7 @@ function Navbar2() {
 
     const BlockchainContextImport =  useContext(BlockchainContext)
     const {web3, contract, accounts} = BlockchainContextImport;
-    console.log('context provider data ',web3, contract, accounts[0]);
+    // console.log('context provider data ',web3, contract, accounts[0]);
 
     const logoutSubmit = async () => {
         try {
