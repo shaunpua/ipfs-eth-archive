@@ -4,7 +4,7 @@ import BlockchainContext from "../BlockchainContext";
 import NavBar1 from "./components/Navbar1"
 
 function RegisterPage() {
-    const [address, setaddress] = useState(null)
+    // const [address, setaddress] = useState(null)
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [passwordC, setPasswordC] = useState('');

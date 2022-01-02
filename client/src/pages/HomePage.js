@@ -4,10 +4,15 @@ import BlockchainContext from "../BlockchainContext";
 import NavBar2 from "./components/Navbar2"
 import Sidebar from "./components/Sidebar";
 import AddFileModal from "./components/AddFileModal";
+import { convertBytes } from '../extraFunctions';
+import moment from 'moment'
+
 
 function HomePage() {
-    const [storageValue, setStorageValue] = useState(0);
+    // const [storageValue, setStorageValue] = useState(0);
     const [filecount, setFilecount] = useState(null);
+    const [files, setFiles] = useState([])
+    // const [files2, setFiles2] = useState([{name: 'shaun', age: 21}, {name: 'jeremy', age: 20}])
     const [contractname, setContractname] = useState('');
     const [openmodal, setOpenmodal] = useState(false);
     const [loggedIn, setLoggedIn] = useState(false)
@@ -23,6 +28,19 @@ function HomePage() {
           try {
                 const checkLogin = await contract.methods.checkIsUserLogged(accounts[0]).call();
                 console.log(checkLogin, 'LOGIN STATE 1 /home')
+
+                await contract.methods.name().call(function(err,res){
+                  setContractname(res);
+                });
+      
+                await contract.methods.fileCount().call(function(err,res){
+                  setFilecount(res);
+                });
+                
+
+                
+      
+                
                 
                 console.log(loggedIn, 'login state 2')
                  if (checkLogin === true){
@@ -35,18 +53,29 @@ function HomePage() {
                 
             }
 
+            // const filecounter = filecount
+            //     console.log(filecounter);
+            //     for (var i = filecounter; i >= 1; i--) {
+            //       const file = await contract.methods.files(i).call();
+            //       console.log('FILE ITER', file);
+            //       setFiles(files =>[...files, file]);
+                  
+            //     }
          
           
           // await contract.methods.set(69).send({ from: accounts[0] });
           
+        await loadFiles();
+          
 
-          contract.methods.name().call(function(err,res){
-            setContractname(res);
-          });
+          // const file = await contract.methods.files(1).call();
+          // console.log('FILE ITER', file);
+          // setFiles(files => [...files, file]);
+          // const file2 = await contract.methods.files(2).call();
+          // console.log('FILE ITER', file);
+          // setFiles(files => [...files, file2]);
 
-          contract.methods.fileCount().call(function(err,res){
-            setFilecount(res);
-          });
+          // console.log('FILES DATA',files[1])
           
           // Get the value from the contract to prove it worked.
           const response = await contract.methods.get().call();
@@ -57,18 +86,27 @@ function HomePage() {
           
     
           // Update state with the result.
-          setStorageValue(response);
+          // setStorageValue(response);
           
     
         }
         if (typeof web3 !== 'undefined' && typeof accounts !== 'undefined' && typeof contract !== 'undefined') {
           load()
         }
-      }, [web3, accounts, contract])
+      }, [web3, accounts, contract, filecount])
 
 
-    
+    const loadFiles = async () => {
+      
+      for (var i = filecount; i >= 1; i--) {
+        const file = await contract.methods.files(i).call();
+        // console.log('FILE ITER', file);
+        setFiles(files =>[...files, file]);
+        
+      }
 
+    }
+    // const filehashOne = files[0].fileSize;
 
     return (
         <div className="HomePage">
@@ -80,6 +118,7 @@ function HomePage() {
             
               <h2>ArchStorage / All Files</h2>
               <h3>File count is: {filecount}</h3>
+              {/* <h3>File count is: {files[1].fileSize}</h3> */}
               <button className="upload-button" onClick={()=> {setOpenmodal(true)}}>Create +</button>
               <div className="home-file-descriptions">
                   <p>ID</p>
@@ -93,7 +132,29 @@ function HomePage() {
               </div>
               
               <div className="home-files-container">
-                <div className="file-section">
+                {files.map((file, key) => {
+                  return (<div className="file-section">
+                  <p>{file.fileId}</p>
+                  <p>{file.fileName}</p>
+                  <p>{file.fileDescription}</p>
+                  <p>{file.fileType}</p>
+                  <p>{convertBytes(file.fileSize)}</p>
+                  <p>{moment.unix(file.uploadTime).format('h:mm:ss A M/D/Y')}</p>
+                  <p><a
+                            href={"https://etherscan.io/address/" + file.uploader}
+                            rel="noopener noreferrer"
+                            target="_blank">
+                            {file.uploader.substring(0,10)}...
+                          </a></p>
+                  <p><a
+                            href={"https://ipfs.infura.io/ipfs/" + file.fileHash}
+                            rel="noopener noreferrer"
+                            target="_blank">
+                            {file.fileHash.substring(0,10)}...
+                          </a></p>
+                </div>)
+                })}
+                {/* <div className="file-section">
                   <p>2</p>
                   <p>Document-test-upload.txt</p>
                   <p>This is a file for testing </p>
@@ -212,7 +273,7 @@ function HomePage() {
                   <p>9:14:01 PM 12/21/2021</p>
                   <p>0x331E51CE3c5C8ec98F62320F60Ec70527AbD05e3</p>
                   <p>bafybeib4hiir6zli7ac67edjraiw352chq5hpmmxobswrmer2etmzmx37a</p>
-                </div>
+                </div> */}
                 
                 
               </div>

@@ -21,7 +21,9 @@ function AddFileModal( {closeModal}) {
         console.log('buffer: ', buffer);
     }, [filetype,filename, buffer]);
 
-
+    const closeModalFunc = () =>{
+        closeModal(false);
+    }
     const uploadFile = async (e) => {
         
         e.preventDefault();
@@ -29,6 +31,20 @@ function AddFileModal( {closeModal}) {
         try {
             const uploadResult = await ipfs.add(Buffer.from(buffer));
             console.log(uploadResult);
+            console.log('ipfs data', uploadResult.path, uploadResult.size);
+
+            if(filetype === ''){
+                setfileType('none');
+            }
+            await contract.methods.uploadFile(uploadResult.path, uploadResult.size, filetype, filename, description).send({ from: accounts[0] }).on('transactionHash', (hash) => {
+               setBuffer(null);
+               setfileType(null);
+               setfileName(null);
+            });
+            window.location.reload(false);
+            // closeModalFunc();
+            
+
             // alert(`HASH DATA ${uploadResult[0].hash}`);
         } catch (err) {
             console.log(err)
