@@ -11,11 +11,12 @@ import moment from 'moment'
 function HomePage() {
     // const [storageValue, setStorageValue] = useState(0);
     const [filecount, setFilecount] = useState(null);
-    const [files, setFiles] = useState([])
+    const [files, setFiles] = useState([]);
+    const [userdata, setUserdata] = useState(null);
     // const [files2, setFiles2] = useState([{name: 'shaun', age: 21}, {name: 'jeremy', age: 20}])
     const [contractname, setContractname] = useState('');
     const [openmodal, setOpenmodal] = useState(false);
-    const [loggedIn, setLoggedIn] = useState(false)
+    const [loggedIn, setLoggedIn] = useState(false);
     const navigate = useNavigate();
 
     const BlockchainContextImport =  useContext(BlockchainContext)
@@ -36,6 +37,12 @@ function HomePage() {
                 await contract.methods.fileCount().call(function(err,res){
                   setFilecount(res);
                 });
+                const userName = await contract.methods.checkUserName(accounts[0]).call();
+                setUserdata(userName);
+                // await contract.methods.user(accounts[0]).call(function(err,res){
+                //   console.log(res)
+                //   setUserdata(res);
+                // });
                 
 
                 
@@ -53,14 +60,7 @@ function HomePage() {
                 
             }
 
-            // const filecounter = filecount
-            //     console.log(filecounter);
-            //     for (var i = filecounter; i >= 1; i--) {
-            //       const file = await contract.methods.files(i).call();
-            //       console.log('FILE ITER', file);
-            //       setFiles(files =>[...files, file]);
-                  
-            //     }
+         
          
           
           // await contract.methods.set(69).send({ from: accounts[0] });
@@ -68,14 +68,6 @@ function HomePage() {
         await loadFiles();
           
 
-          // const file = await contract.methods.files(1).call();
-          // console.log('FILE ITER', file);
-          // setFiles(files => [...files, file]);
-          // const file2 = await contract.methods.files(2).call();
-          // console.log('FILE ITER', file);
-          // setFiles(files => [...files, file2]);
-
-          // console.log('FILES DATA',files[1])
           
           // Get the value from the contract to prove it worked.
           const response = await contract.methods.get().call();
@@ -106,7 +98,6 @@ function HomePage() {
       }
 
     }
-    // const filehashOne = files[0].fileSize;
 
     return (
         <div className="HomePage">
@@ -118,6 +109,7 @@ function HomePage() {
             
               <h2>ArchStorage / All Files</h2>
               <h3>File count is: {filecount}</h3>
+              <h3>user name  is: {userdata}</h3>
               {/* <h3>File count is: {files[1].fileSize}</h3> */}
               <button className="upload-button" onClick={()=> {setOpenmodal(true)}}>Create +</button>
               <div className="home-file-descriptions">

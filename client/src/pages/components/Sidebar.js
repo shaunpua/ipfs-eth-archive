@@ -5,7 +5,7 @@ function Sidebar() {
     return (
         <div className="sidebar">
             <Link  to="/" className="sidebar-link">All Files</Link>
-            <Link  to="/auth" className="sidebar-link">Transactions</Link>
+            <Link  to="/transactions" className="sidebar-link">Transactions</Link>
             <p className="sidebar-end">Copyright @2021</p>
             
         </div>

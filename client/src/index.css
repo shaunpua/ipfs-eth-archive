@@ -420,9 +420,10 @@ button:hover {
 .home-files-container {
   background-color: #fafaf8;
   min-width: 1000px;
-  height: 600px;
+  min-height: auto;
   overflow: hidden;
   overflow-y: scroll;
+  overflow-x: scroll;
 }
 
 .file-section {
@@ -433,4 +434,9 @@ button:hover {
   min-height: 30px;
   padding: 5px 5px;
   border-bottom: 0.25px solid rgb(204, 204, 204);
+}
+
+.TransactionPage {
+  display: flex;
+  flex-direction: column;
 }

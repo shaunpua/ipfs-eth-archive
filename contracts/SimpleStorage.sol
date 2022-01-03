@@ -34,6 +34,7 @@ contract SimpleStorage {
         string userName;
         string fileName;
         string fileHash;
+        uint256 fileSize;
         string transactionType;
         uint256 changeLevel;
     }
@@ -41,7 +42,7 @@ contract SimpleStorage {
 
     //events
 
-    event transactionAdded(Transaction temp);
+    // event transactionAdded(Transaction temp);
 
     event FileUploaded(
         uint256 fileId,
@@ -90,6 +91,18 @@ contract SimpleStorage {
             block.timestamp,
             msg.sender
         );
+
+        Transaction memory temp;
+        temp.userAddress = msg.sender;
+        temp.userName = user[msg.sender].name;
+        temp.fileName = _fileName;
+        temp.fileHash = _fileHash;
+        temp.fileSize = _fileSize;
+        temp.transactionType = "ADD";
+        temp.changeLevel = 0;
+        transactions.push(temp);
+
+        transactionCount++;
         // Trigger an event
         emit FileUploaded(
             fileCount,
@@ -138,39 +151,43 @@ contract SimpleStorage {
         return (user[_address].isUserLoggedIn);
     }
 
+    function checkUserName(address _address)
+        public
+        view
+        returns (string memory)
+    {
+        return (user[_address].name);
+    }
+
     // logout the user
     function logout(address _address) public {
         user[_address].isUserLoggedIn = false;
     }
 
-    function addTransaction(
-        address _userAddress,
-        string memory _userName,
-        string memory _fileName,
-        string memory _fileHash,
-        string memory _transactionType,
-        uint256 _changeLevel
-    ) public {
-        Transaction memory temp;
-        temp.userAddress = _userAddress;
-        temp.userName = _userName;
-        temp.fileName = _fileName;
-        temp.fileHash = _fileHash;
-        temp.transactionType = _transactionType;
-        temp.changeLevel = _changeLevel;
-        transactions.push(temp);
-        transactionCount++;
-        emit transactionAdded(temp);
-        /*
-        emit transactionAdded(
-            _userAddress,
-            _userName,
-            _fileName,
-            _fileHash,
-            _transactionType,
-            _changeLevel
-        );
-        */
+    // function addTransaction(
+    //     address _userAddress,
+    //     string memory _userName,
+    //     string memory _fileName,
+    //     string memory _fileHash,
+    //     string memory _transactionType,
+    //     uint256 _changeLevel
+    // ) public {
+    //     Transaction memory temp;
+    //     temp.userAddress = _userAddress;
+    //     temp.userName = _userName;
+    //     temp.fileName = _fileName;
+    //     temp.fileHash = _fileHash;
+    //     temp.transactionType = _transactionType;
+    //     temp.changeLevel = _changeLevel;
+    //     transactions.push(temp);
+
+    //     transactionCount++;
+    //     emit transactionAdded(temp);
+
+    // }
+
+    function getAllTransactions() public view returns (Transaction[] memory) {
+        return transactions;
     }
 
     function set(uint256 x) public {

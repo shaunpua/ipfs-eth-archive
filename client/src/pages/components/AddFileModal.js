@@ -41,6 +41,7 @@ function AddFileModal( {closeModal}) {
                setfileType(null);
                setfileName(null);
             });
+            
             window.location.reload(false);
             // closeModalFunc();
             
