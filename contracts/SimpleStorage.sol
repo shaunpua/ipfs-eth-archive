@@ -37,6 +37,7 @@ contract SimpleStorage {
         uint256 fileSize;
         string transactionType;
         uint256 changeLevel;
+        uint256 uploadTime;
     }
     Transaction[] transactions;
 
@@ -51,6 +52,14 @@ contract SimpleStorage {
         string fileType,
         string fileName,
         string fileDescription,
+        uint256 uploadTime,
+        address uploader
+    );
+
+    event FileUpdated(
+        string fileHash,
+        uint256 fileSize,
+        string fileType,
         uint256 uploadTime,
         address uploader
     );
@@ -100,6 +109,7 @@ contract SimpleStorage {
         temp.fileSize = _fileSize;
         temp.transactionType = "ADD";
         temp.changeLevel = 0;
+        temp.uploadTime = block.timestamp;
         transactions.push(temp);
 
         transactionCount++;
@@ -114,6 +124,57 @@ contract SimpleStorage {
             block.timestamp,
             msg.sender
         );
+    }
+
+    function updateFile(
+        string memory _fileHash,
+        uint256 _fileSize,
+        string memory _fileType,
+        uint256 _fileID,
+        uint256 _changeValue
+    ) public {
+        // Make sure the file hash exists
+        require(bytes(_fileHash).length > 0);
+        // Make sure file type exists
+        require(bytes(_fileType).length > 0);
+        // Make sure uploader address exists
+        require(msg.sender != address(0));
+        // Make sure file size is more than 0
+        require(_fileSize > 0);
+        require(_fileID > 0 && _fileID <= fileCount);
+        require(_changeValue >= 0);
+
+        // update current file
+        files[_fileID].fileHash = _fileHash;
+        files[_fileID].fileSize = _fileSize;
+        files[_fileID].fileType = _fileType;
+        files[_fileID].uploadTime = block.timestamp;
+        files[_fileID].uploader = msg.sender;
+
+        Transaction memory temp;
+        temp.userAddress = msg.sender;
+        temp.userName = user[msg.sender].name;
+        temp.fileName = files[_fileID].fileName;
+        temp.fileHash = _fileHash;
+        temp.fileSize = _fileSize;
+        temp.transactionType = "UPDATE";
+        temp.changeLevel = _changeValue;
+        temp.uploadTime = block.timestamp;
+        transactions.push(temp);
+
+        transactionCount++;
+        // Trigger an event
+        emit FileUpdated(
+            _fileHash,
+            _fileSize,
+            _fileType,
+            block.timestamp,
+            msg.sender
+        );
+    }
+
+    function getFile(uint256 _fileID) public view returns (File memory) {
+        return files[_fileID];
     }
 
     // user registration function

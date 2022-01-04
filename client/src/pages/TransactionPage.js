@@ -4,7 +4,7 @@ import BlockchainContext from "../BlockchainContext";
 import NavBar2 from "./components/Navbar2"
 import Sidebar from "./components/Sidebar";
 import { convertBytes } from '../extraFunctions';
-
+import moment from 'moment'
 
 function TransactionPage() {
     const [transactions, setTransactions] = useState([]);
@@ -72,6 +72,7 @@ function TransactionPage() {
                   <p>Uploader Address</p>
                   <p>Transaction Type</p>
                   <p>Change Level</p>
+                  <p>Upload Date</p>
                   
               </div>
               
@@ -96,6 +97,7 @@ function TransactionPage() {
                           </a></p>
                 <p>{transaction.transactionType}</p>
                 <p>{transaction.changeLevel}</p>
+                <p>{moment.unix(transaction.uploadTime).format('h:mm:ss A M/D/Y')}</p>
                 
                   
                 </div>)

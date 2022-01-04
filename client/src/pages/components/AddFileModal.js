@@ -14,7 +14,6 @@ function AddFileModal( {closeModal}) {
     const [buffer, setBuffer] = useState(null);
     const BlockchainContextImport =  useContext(BlockchainContext)
     const {web3, contract, accounts} = BlockchainContextImport;
-    // console.log('context provider data ',web3, contract, accounts[0]);
 
     useEffect(() => {
         console.log('FILE DATA:', filename, filetype);
@@ -27,7 +26,7 @@ function AddFileModal( {closeModal}) {
     const uploadFile = async (e) => {
         
         e.preventDefault();
-        // alert(`FILE DATA ${filename} ${filetype} ${buffer}`);
+       
         try {
             const uploadResult = await ipfs.add(Buffer.from(buffer));
             console.log(uploadResult);
@@ -45,41 +44,9 @@ function AddFileModal( {closeModal}) {
             window.location.reload(false);
             // closeModalFunc();
             
-
-            // alert(`HASH DATA ${uploadResult[0].hash}`);
         } catch (err) {
             console.log(err)
         }
-        // ipfs.add(buffer, (error, result) => {
-        //     console.log('IPFS result', result.size)
-        //     if(error) {
-        //       console.error(error)
-        //       return
-        //     }
-        //     // console.log('POTATO');
-        //     
-        //     // alert(`FILE DATA ${filename} ${filetype} ${buffer}`);
-            
-        //     // this.setState({ loading: true })
-        //     // // Assign value for the file without extension
-        //     // if(this.state.type === ''){
-        //     //   this.setState({type: 'none'})
-        //     // }
-        //     // this.state.dstorage.methods.uploadFile(result[0].hash, result[0].size, this.state.type, this.state.name, description).send({ from: this.state.account }).on('transactionHash', (hash) => {
-        //     //   this.setState({
-        //     //    loading: false,
-        //     //    type: null,
-        //     //    name: null
-        //     //  })
-        //     //  window.location.reload()
-        //     // }).on('error', (e) =>{
-        //     //   window.alert('Error')
-        //     //   this.setState({loading: false})
-        //     // })
-        //   })
-
-        
-        
         
     }
 
@@ -89,18 +56,13 @@ function AddFileModal( {closeModal}) {
         const file = event.target.files[0]
         console.log(file)
         const reader = new window.FileReader()
-        // // setBuffer([...buffer, Buffer(reader.result)]);
-        // setfileType(event.target.files[0].type);
-        // setfileName(event.target.files[0].name);
-        //   console.log('FILE DATA:', filename, filetype);
-        //   console.log('buffer: ', buffer);
+        
         reader.readAsArrayBuffer(file)
         reader.onloadend = () => {
             setBuffer(Buffer(reader.result));
             setfileType(file.type);
             setfileName(file.name);
-            // console.log('FILE DATA:', filename, filetype);
-            // console.log('buffer: ', buffer);
+
         }
       }
     return (
@@ -126,9 +88,7 @@ function AddFileModal( {closeModal}) {
                     <div className="form-input">
                     <input
                     type="file"
-                    // value={uploadfile}
                     onChange={captureFile}
-                    // onChange={(e) => setUploadfile(e.target.files[0])}
                     />
                     </div>
                     

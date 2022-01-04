@@ -4,28 +4,29 @@ import BlockchainContext from "../BlockchainContext";
 import NavBar2 from "./components/Navbar2"
 import Sidebar from "./components/Sidebar";
 import AddFileModal from "./components/AddFileModal";
+import UpdateFileModal from "./components/UpdateFileModal";
 import { convertBytes } from '../extraFunctions';
 import moment from 'moment'
 
 
 function HomePage() {
-    // const [storageValue, setStorageValue] = useState(0);
     const [filecount, setFilecount] = useState(null);
     const [files, setFiles] = useState([]);
     const [userdata, setUserdata] = useState(null);
-    // const [files2, setFiles2] = useState([{name: 'shaun', age: 21}, {name: 'jeremy', age: 20}])
+    const [fileID, setFileID] = useState(null);
     const [contractname, setContractname] = useState('');
     const [openmodal, setOpenmodal] = useState(false);
+    const [updatemodal, setUpdatemodal] = useState(false);
     const [loggedIn, setLoggedIn] = useState(false);
     const navigate = useNavigate();
 
     const BlockchainContextImport =  useContext(BlockchainContext)
     const {web3, contract, accounts} = BlockchainContextImport;
     // console.log('context provider data ',web3, contract, accounts[0]);
-
+    
     useEffect(()=>{
         const load = async () => {
-          // Stores a given value, 5 by default.
+          
           try {
                 const checkLogin = await contract.methods.checkIsUserLogged(accounts[0]).call();
                 console.log(checkLogin, 'LOGIN STATE 1 /home')
@@ -64,28 +65,15 @@ function HomePage() {
          
           
           // await contract.methods.set(69).send({ from: accounts[0] });
-          
+        setFiles([]);
         await loadFiles();
-          
-
-          
-          // Get the value from the contract to prove it worked.
-          const response = await contract.methods.get().call();
-          // console.log(contract.methods.name())
-          // console.log(contract)
-          // console.log(response)
-          
-          
-    
-          // Update state with the result.
-          // setStorageValue(response);
-          
+                      
     
         }
         if (typeof web3 !== 'undefined' && typeof accounts !== 'undefined' && typeof contract !== 'undefined') {
           load()
         }
-      }, [web3, accounts, contract, filecount])
+      }, [web3, accounts, contract, filecount, fileID])
 
 
     const loadFiles = async () => {
@@ -103,6 +91,7 @@ function HomePage() {
         <div className="HomePage">
           <NavBar2/>
           {openmodal && <AddFileModal closeModal={setOpenmodal}/>}
+          {updatemodal && <UpdateFileModal  fileIndex={fileID} closeModal={setUpdatemodal} />}
           <div className="home-container">
             <Sidebar/>
             <div className="home-content">
@@ -144,6 +133,11 @@ function HomePage() {
                             target="_blank">
                             {file.fileHash.substring(0,10)}...
                           </a></p>
+                  <button onClick={()=> {
+                    setUpdatemodal(true)
+                    setFileID(file.fileId)
+                    }}>Update</button>
+                  
                 </div>)
                 })}
                 {/* <div className="file-section">
