@@ -11,13 +11,20 @@ import moment from 'moment'
 
 function HomePage() {
     const [filecount, setFilecount] = useState(null);
+    const [fileNum, setFileNum] = useState(null);
     const [files, setFiles] = useState([]);
+    const [checked, setChecked] = useState([]);
+    const [deletedID, setDeletedID] = useState([]);
     const [userdata, setUserdata] = useState(null);
     const [fileID, setFileID] = useState(null);
-    const [contractname, setContractname] = useState('');
     const [openmodal, setOpenmodal] = useState(false);
     const [updatemodal, setUpdatemodal] = useState(false);
+    const [displayDelete, setDisplayDelete] = useState(false);
     const [loggedIn, setLoggedIn] = useState(false);
+
+    // const [contractname, setContractname] = useState('');
+
+
     const navigate = useNavigate();
 
     const BlockchainContextImport =  useContext(BlockchainContext)
@@ -31,12 +38,19 @@ function HomePage() {
                 const checkLogin = await contract.methods.checkIsUserLogged(accounts[0]).call();
                 console.log(checkLogin, 'LOGIN STATE 1 /home')
 
-                await contract.methods.name().call(function(err,res){
-                  setContractname(res);
-                });
+                // await contract.methods.name().call(function(err,res){
+                //   setContractname(res);
+                  
+                // });
       
-                await contract.methods.fileCount().call(function(err,res){
+                await contract.methods.fileIDs().call(function(err,res){
                   setFilecount(res);
+                  
+                });
+
+                await contract.methods.fileNum().call(function(err,res){
+                  setFileNum(res);
+                  
                 });
                 const userName = await contract.methods.checkUserName(accounts[0]).call();
                 setUserdata(userName);
@@ -44,11 +58,6 @@ function HomePage() {
                 //   console.log(res)
                 //   setUserdata(res);
                 // });
-                
-
-                
-      
-                
                 
                 console.log(loggedIn, 'login state 2')
                  if (checkLogin === true){
@@ -61,13 +70,8 @@ function HomePage() {
                 
             }
 
-         
-         
-          
-          // await contract.methods.set(69).send({ from: accounts[0] });
         setFiles([]);
-        await loadFiles();
-                      
+        await loadFiles(); 
     
         }
         if (typeof web3 !== 'undefined' && typeof accounts !== 'undefined' && typeof contract !== 'undefined') {
@@ -80,11 +84,59 @@ function HomePage() {
       
       for (var i = filecount; i >= 1; i--) {
         const file = await contract.methods.files(i).call();
-        // console.log('FILE ITER', file);
-        setFiles(files =>[...files, file]);
+        
+        if (file.fileId > 0){
+          setFiles(files =>[...files, file]);
+          setChecked(checked =>[...checked, false]);
+        }
+
+        // setFiles(files =>[...files, file]);
+        
+        
         
       }
 
+    }
+
+    const handleOnChange = (position) => {
+      const updatedCheckedState = checked.map((item, index) =>
+        index === position ? !item : item
+      );
+
+      setChecked(updatedCheckedState);
+      if (checked[position] === false) {
+        setDeletedID(deletedID =>[...deletedID, position+1]);
+      } else {
+        const updatedDeletedIDs = deletedID.filter((id) => {
+          return id != position+1;
+        })
+
+        setDeletedID(updatedDeletedIDs);
+      }
+      
+    };
+
+    const ifDeletedSelected = (checked) =>{
+      
+      for (let i = 0; i < checked.length; i++ ){
+        if (checked[i] === true) {
+          return true
+        }
+      }
+      return false
+    }
+
+    const deleteFiles = async (deletedID) => {
+
+      console.log(deletedID);
+
+      try {
+        await contract.methods.deleteFile(deletedID).send({ from: accounts[0] });
+        window.location.reload(false);
+
+      } catch (err) {
+        console.log(err)
+      }  
     }
 
     return (
@@ -97,7 +149,8 @@ function HomePage() {
             <div className="home-content">
             
               <h2>ArchStorage / All Files</h2>
-              <h3>File count is: {filecount}</h3>
+              <h3>File count: {fileNum}</h3>
+              <h3>Total added files are: {filecount}</h3>
               <h3>user name  is: {userdata}</h3>
               {/* <h3>File count is: {files[1].fileSize}</h3> */}
               <button className="upload-button" onClick={()=> {setOpenmodal(true)}}>Create +</button>
@@ -115,6 +168,15 @@ function HomePage() {
               <div className="home-files-container">
                 {files.map((file, key) => {
                   return (<div className="file-section">
+                     <input
+                    type="checkbox"
+                    
+                    
+                    checked={checked[file.fileId-1]}
+                    onChange={() => {
+                      handleOnChange(file.fileId-1)
+                    }}
+                  />
                   <p>{file.fileId}</p>
                   <p>{file.fileName}</p>
                   <p>{file.fileDescription}</p>
@@ -140,142 +202,25 @@ function HomePage() {
                   
                 </div>)
                 })}
-                {/* <div className="file-section">
-                  <p>2</p>
-                  <p>Document-test-upload.txt</p>
-                  <p>This is a file for testing </p>
-                  <p>doc/doc.x</p>
-                  <p>254 bytes</p>
-                  <p>9:14:01 PM 12/21/2021</p>
-                  <p>0x331E51CE3c5C8ec98F62320F60Ec70527AbD05e3</p>
-                  <p>bafybeib4hiir6zli7ac67edjraiw352chq5hpmmxobswrmer2etmzmx37a</p>
-                </div>
-                <div className="file-section">
-                  <p>2</p>
-                  <p>Document-test-upload.txt</p>
-                  <p>This is a file for testing </p>
-                  <p>doc/doc.x</p>
-                  <p>254 bytes</p>
-                  <p>9:14:01 PM 12/21/2021</p>
-                  <p>0x331E51CE3c5C8ec98F62320F60Ec70527AbD05e3</p>
-                  <p>bafybeib4hiir6zli7ac67edjraiw352chq5hpmmxobswrmer2etmzmx37a</p>
-                </div>
-                <div className="file-section">
-                  <p>2</p>
-                  <p>Document-test-upload.txt</p>
-                  <p>This is a file for testing </p>
-                  <p>doc/doc.x</p>
-                  <p>254 bytes</p>
-                  <p>9:14:01 PM 12/21/2021</p>
-                  <p>0x331E51CE3c5C8ec98F62320F60Ec70527AbD05e3</p>
-                  <p>bafybeib4hiir6zli7ac67edjraiw352chq5hpmmxobswrmer2etmzmx37a</p>
-                </div>
-                <div className="file-section">
-                  <p>2</p>
-                  <p>Document-test-upload.txt</p>
-                  <p>This is a file for testing </p>
-                  <p>doc/doc.x</p>
-                  <p>254 bytes</p>
-                  <p>9:14:01 PM 12/21/2021</p>
-                  <p>0x331E51CE3c5C8ec98F62320F60Ec70527AbD05e3</p>
-                  <p>bafybeib4hiir6zli7ac67edjraiw352chq5hpmmxobswrmer2etmzmx37a</p>
-                </div>
-                <div className="file-section">
-                  <p>2</p>
-                  <p>Document-test-upload.txt</p>
-                  <p>This is a file for testing </p>
-                  <p>doc/doc.x</p>
-                  <p>254 bytes</p>
-                  <p>9:14:01 PM 12/21/2021</p>
-                  <p>0x331E51CE3c5C8ec98F62320F60Ec70527AbD05e3</p>
-                  <p>bafybeib4hiir6zli7ac67edjraiw352chq5hpmmxobswrmer2etmzmx37a</p>
-                </div>
-                <div className="file-section">
-                  <p>2</p>
-                  <p>Document-test-upload.txt</p>
-                  <p>This is a file for testing </p>
-                  <p>doc/doc.x</p>
-                  <p>254 bytes</p>
-                  <p>9:14:01 PM 12/21/2021</p>
-                  <p>0x331E51CE3c5C8ec98F62320F60Ec70527AbD05e3</p>
-                  <p>bafybeib4hiir6zli7ac67edjraiw352chq5hpmmxobswrmer2etmzmx37a</p>
-                </div>
-                <div className="file-section">
-                  <p>2</p>
-                  <p>Document-test-upload.txt</p>
-                  <p>This is a file for testing </p>
-                  <p>doc/doc.x</p>
-                  <p>254 bytes</p>
-                  <p>9:14:01 PM 12/21/2021</p>
-                  <p>0x331E51CE3c5C8ec98F62320F60Ec70527AbD05e3</p>
-                  <p>bafybeib4hiir6zli7ac67edjraiw352chq5hpmmxobswrmer2etmzmx37a</p>
-                </div>
-                <div className="file-section">
-                  <p>2</p>
-                  <p>Document-test-upload.txt</p>
-                  <p>This is a file for testing </p>
-                  <p>doc/doc.x</p>
-                  <p>254 bytes</p>
-                  <p>9:14:01 PM 12/21/2021</p>
-                  <p>0x331E51CE3c5C8ec98F62320F60Ec70527AbD05e3</p>
-                  <p>bafybeib4hiir6zli7ac67edjraiw352chq5hpmmxobswrmer2etmzmx37a</p>
-                </div>
-                <div className="file-section">
-                  <p>2</p>
-                  <p>Document-test-upload.txt</p>
-                  <p>This is a file for testing </p>
-                  <p>doc/doc.x</p>
-                  <p>254 bytes</p>
-                  <p>9:14:01 PM 12/21/2021</p>
-                  <p>0x331E51CE3c5C8ec98F62320F60Ec70527AbD05e3</p>
-                  <p>bafybeib4hiir6zli7ac67edjraiw352chq5hpmmxobswrmer2etmzmx37a</p>
-                </div>
-                <div className="file-section">
-                  <p>2</p>
-                  <p>Document-test-upload.txt</p>
-                  <p>This is a file for testing </p>
-                  <p>doc/doc.x</p>
-                  <p>254 bytes</p>
-                  <p>9:14:01 PM 12/21/2021</p>
-                  <p>0x331E51CE3c5C8ec98F62320F60Ec70527AbD05e3</p>
-                  <p>bafybeib4hiir6zli7ac67edjraiw352chq5hpmmxobswrmer2etmzmx37a</p>
-                </div>
-                <div className="file-section">
-                  <p>2</p>
-                  <p>Document-test-upload.txt</p>
-                  <p>This is a file for testing </p>
-                  <p>doc/doc.x</p>
-                  <p>254 bytes</p>
-                  <p>9:14:01 PM 12/21/2021</p>
-                  <p>0x331E51CE3c5C8ec98F62320F60Ec70527AbD05e3</p>
-                  <p>bafybeib4hiir6zli7ac67edjraiw352chq5hpmmxobswrmer2etmzmx37a</p>
-                </div>
-                <div className="file-section">
-                  <p>2</p>
-                  <p>Document-test-upload.txt</p>
-                  <p>This is a file for testing </p>
-                  <p>doc/doc.x</p>
-                  <p>254 bytes</p>
-                  <p>9:14:01 PM 12/21/2021</p>
-                  <p>0x331E51CE3c5C8ec98F62320F60Ec70527AbD05e3</p>
-                  <p>bafybeib4hiir6zli7ac67edjraiw352chq5hpmmxobswrmer2etmzmx37a</p>
-                </div> */}
                 
                 
               </div>
-            {/* <h1>Good to Go!</h1>
-          <p>Your Truffle Box is installed and ready.</p>
-          <h2>Smart Contract Example</h2>
-          <p>
-            If your contracts compiled and migrated successfully, below will show
-            a stored value of 5 (by default).
-          </p>
-          <p>
-            Try changing the value stored on <strong>line 42</strong> of App.js.
-          </p>
-          
-          <div>The stored value is: {storageValue}</div>
-          <div>Contract name is  {contractname}</div> */}
+             {ifDeletedSelected(checked) && <button className="upload-button" onClick={()=> {setDisplayDelete(true)}}>Delete</button>}
+             {displayDelete && <div className="modal-background">
+                <div className="modal-container">
+                <button className="modal-close-button" onClick={()=> {setDisplayDelete(false)}}> X </button>
+                <div className="modal-title">
+                    <h1>Delete Selected Files</h1>
+                    <h2>Are you sure?</h2>
+                </div>
+                
+                <button className="register-button" onClick={()=> {deleteFiles(deletedID)}}>Delete</button>
+                <button className="register-button" onClick={()=> {setDisplayDelete(false)}}>Cancel</button>
+                </div>
+             </div>}
+             
+              
+             
             </div>
           </div>
            

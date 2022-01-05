@@ -54,7 +54,7 @@ function UpdateFileModal(props) {
             const fileData = await contract.methods.files(props.fileIndex).call();
         
             setFiledata(fileData);
-            console.log(fileData, fileData.fileId);
+            console.log('pulled fila data', fileData.fileHash, fileData.fileId);
             
             await contract.methods.updateFile(uploadResult.path, uploadResult.size, filetype, props.fileIndex, 100).send({ from: accounts[0] }).on('transactionHash', (hash) => {
                 setBuffer(null);

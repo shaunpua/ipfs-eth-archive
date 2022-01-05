@@ -6,7 +6,8 @@ contract SimpleStorage {
     string public name = "ArchStorage";
     uint256 storedData;
 
-    uint256 public fileCount = 0;
+    uint256 public fileIDs = 0;
+    uint256 public fileNum = 0;
     uint256 public transactionCount = 0;
     mapping(uint256 => File) public files;
     mapping(address => UserDetail) user;
@@ -87,11 +88,12 @@ contract SimpleStorage {
         require(_fileSize > 0);
 
         // Increment file id
-        fileCount++;
+        fileIDs++;
+        fileNum++;
 
         // Add File to the contract
-        files[fileCount] = File(
-            fileCount,
+        files[fileIDs] = File(
+            fileIDs,
             _fileHash,
             _fileSize,
             _fileType,
@@ -115,7 +117,7 @@ contract SimpleStorage {
         transactionCount++;
         // Trigger an event
         emit FileUploaded(
-            fileCount,
+            fileIDs,
             _fileHash,
             _fileSize,
             _fileType,
@@ -141,7 +143,7 @@ contract SimpleStorage {
         require(msg.sender != address(0));
         // Make sure file size is more than 0
         require(_fileSize > 0);
-        require(_fileID > 0 && _fileID <= fileCount);
+        require(_fileID > 0 && _fileID <= fileIDs);
         require(_changeValue >= 0);
 
         // update current file
@@ -175,6 +177,14 @@ contract SimpleStorage {
 
     function getFile(uint256 _fileID) public view returns (File memory) {
         return files[_fileID];
+    }
+
+    function deleteFile(uint256[] memory _fileID) public {
+        require(_fileID.length > 0);
+        for (uint256 i = 0; i < _fileID.length; i++) {
+            delete files[_fileID[i]];
+            fileNum -= 1;
+        }
     }
 
     // user registration function

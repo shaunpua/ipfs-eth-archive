@@ -28,7 +28,7 @@ function TransactionPage() {
                 
                 const transactionArray = await contract.methods.getAllTransactions().call();
 
-                console.log(transactionArray);
+                // console.log(transactionArray);
 
                 setTransactions(transactionArray);
                 
