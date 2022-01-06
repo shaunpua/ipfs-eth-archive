@@ -182,6 +182,18 @@ contract SimpleStorage {
     function deleteFile(uint256[] memory _fileID) public {
         require(_fileID.length > 0);
         for (uint256 i = 0; i < _fileID.length; i++) {
+            Transaction memory temp;
+            temp.userAddress = msg.sender;
+            temp.userName = user[msg.sender].name;
+            temp.fileName = files[_fileID[i]].fileName;
+            temp.fileHash = files[_fileID[i]].fileHash;
+            temp.fileSize = files[_fileID[i]].fileSize;
+            temp.transactionType = "DELETE";
+            temp.changeLevel = 0;
+            temp.uploadTime = block.timestamp;
+            transactions.push(temp);
+
+            transactionCount++;
             delete files[_fileID[i]];
             fileNum -= 1;
         }
