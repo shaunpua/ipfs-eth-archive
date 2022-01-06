@@ -98,17 +98,17 @@ function HomePage() {
 
     }
 
-    const handleOnChange = (position) => {
+    const handleOnChange = (position, fileid) => {
       const updatedCheckedState = checked.map((item, index) =>
         index === position ? !item : item
       );
 
       setChecked(updatedCheckedState);
       if (checked[position] === false) {
-        setDeletedID(deletedID =>[...deletedID, position+1]);
+        setDeletedID(deletedID =>[...deletedID, fileid]);
       } else {
         const updatedDeletedIDs = deletedID.filter((id) => {
-          return id != position+1;
+          return id != fileid;
         })
 
         setDeletedID(updatedDeletedIDs);
@@ -172,9 +172,9 @@ function HomePage() {
                     type="checkbox"
                     
                     
-                    checked={checked[file.fileId-1]}
+                    checked={checked[key]}
                     onChange={() => {
-                      handleOnChange(file.fileId-1)
+                      handleOnChange(key, file.fileId)
                     }}
                   />
                   <p>{file.fileId}</p>
@@ -210,7 +210,7 @@ function HomePage() {
                 <div className="modal-container">
                 <button className="modal-close-button" onClick={()=> {setDisplayDelete(false)}}> X </button>
                 <div className="modal-title">
-                    <h1>Delete Selected Files</h1>
+                    <h1>Delete Selected Files ({deletedID.length})</h1>
                     <h2>Are you sure?</h2>
                 </div>
                 
