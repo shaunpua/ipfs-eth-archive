@@ -12,11 +12,13 @@ function UpdateFileModal(props) {
     const [buffer, setBuffer] = useState(null);
     const BlockchainContextImport =  useContext(BlockchainContext)
     const {web3, contract, accounts} = BlockchainContextImport;
+    const [file_ext_new, setfileExtNew] = useState(null);
 
     useEffect(() => {
         console.log('FILE DATA:', filename, filetype);
         console.log('buffer: ', buffer);
-    }, [filetype,filename, buffer]);
+        console.log('newfile ext:',file_ext_new);
+    }, [filetype,filename, buffer,file_ext_new]);
 
     const captureFile = event => {
         event.preventDefault()
@@ -34,7 +36,8 @@ function UpdateFileModal(props) {
             setBuffer(Buffer(reader.result));
             setfileType(file.type);
             setfileName(file.name);
-            
+            var fileExtVal=file.name.split(".");
+            setfileExtNew(fileExtVal[1]);
         }
       }
 
@@ -43,6 +46,7 @@ function UpdateFileModal(props) {
         e.preventDefault();
        
         try {
+            
             const uploadResult = await ipfs.add(Buffer.from(buffer));
             console.log(uploadResult);
             console.log('ipfs data', uploadResult.path, uploadResult.size);
@@ -50,19 +54,40 @@ function UpdateFileModal(props) {
             if(filetype === ''){
                 setfileType('none');
             }
-
+            //console log the file content of the new updated file
+            let contents_new = ""
+            // loop over incoming data
+            if(file_ext_new==="txt"){
+                for await(const item of ipfs.cat(uploadResult.path)){
+                    // turn string buffer to string and append to contents
+                    contents_new += new TextDecoder().decode(item)
+                }
+                console.log('New File Content:'+contents_new);
+            }
+            // else if(file_ext_new==="docx"){
+            //     for await(const item of ipfs.cat(uploadResult.path)){
+            //         // turn string buffer to string and append to contents
+            //         contents += new TextDecoder().decode(item)
+            //     }
+            //     console.log('New File Content pre conversion:'+contents);
+            //     //let docxcontents = await getWordBodyText("file-sample_100kB.docx");
+            //     console.log("New File Content post conversion:"+docxcontents);
+            // }
             const fileData = await contract.methods.files(props.fileIndex).call();
         
             setFiledata(fileData);
-            console.log('pulled fila data', fileData.fileHash, fileData.fileId);
-            
-            await contract.methods.updateFile(uploadResult.path, uploadResult.size, filetype, props.fileIndex, 100).send({ from: accounts[0] }).on('transactionHash', (hash) => {
+            console.log('pulled file data', fileData.fileHash, fileData.fileId);
+        
+            const EditDistance=require("../../EditDistance")
+            const EditNum=EditDistance.levenshtein(contents_old,contents_new);
+            console.log("EditDistance is:"+EditNum );
+            await contract.methods.updateFile(uploadResult.path, uploadResult.size, filetype, props.fileIndex, EditNum).send({ from: accounts[0] }).on('transactionHash', (hash) => {
                 setBuffer(null);
                 setfileType(null);
                 setfileName(null);
              });
             
-            window.location.reload(false);
+            //window.location.reload(false);
             
         } catch (err) {
             console.log(err)
@@ -83,7 +108,9 @@ function UpdateFileModal(props) {
                 
                 <div className="form-input">
                 <input
-                type="file"
+                type="file" 
+                //accept=".docx,.txt"
+                accept=".txt"
                 // value={uploadfile}
                 onChange={captureFile}
                 // onChange={(e) => setUploadfile(e.target.files[0])}
