@@ -77,7 +77,20 @@ function UpdateFileModal(props) {
         
             setFiledata(fileData);
             console.log('pulled file data', fileData.fileHash, fileData.fileId);
-        
+            let contents_old = ""
+              // loop over incoming data
+              for await(const item of ipfs.cat(fileData.fileHash)){
+                  // turn string buffer to string and append to contents
+                  contents_old += new TextDecoder().decode(item)
+              }
+            contents_old=contents_old.toLowerCase();
+            contents_new=contents_new.toLowerCase();
+            contents_old=contents_old.replace(/(\r\n|\n|\r)/gm, "");
+            contents_new=contents_new.replace(/(\r\n|\n|\r)/gm, "");
+            contents_old=contents_old.split(' ').join('');
+            contents_new=contents_new.split(' ').join('');
+            console.log("processed content old: "+contents_old);
+            console.log("processed content new: "+contents_new);
             const EditDistance=require("../../EditDistance")
             const EditNum=EditDistance.levenshtein(contents_old,contents_new);
             console.log("EditDistance is:"+EditNum );
