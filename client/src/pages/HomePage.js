@@ -135,6 +135,7 @@ function HomePage() {
         window.location.reload(false);
 
       } catch (err) {
+        setDisplayDelete(false);
         console.log(err)
       }  
     }

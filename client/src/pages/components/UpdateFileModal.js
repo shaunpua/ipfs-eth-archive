@@ -18,6 +18,11 @@ function UpdateFileModal(props) {
         console.log('buffer: ', buffer);
     }, [filetype,filename, buffer]);
 
+
+    const closeModalFunc = () =>{
+        props.closeModal(false)
+    }
+
     const captureFile = event => {
         event.preventDefault()
     
@@ -26,17 +31,18 @@ function UpdateFileModal(props) {
         const reader = new window.FileReader()
 
         // const fileData = contract.methods.files(props.fileIndex).call();
-        
         // setFiledata(fileData);
         // console.log(fileData);
         reader.readAsArrayBuffer(file)
         reader.onloadend = () => {
             setBuffer(Buffer(reader.result));
             setfileType(file.type);
-            setfileName(file.name);
+            const fileNameFilter = file.name.split(".")
+            setfileName(fileNameFilter[0]);
             
         }
       }
+      
 
       const updateFile = async (e) => {
         
@@ -54,9 +60,9 @@ function UpdateFileModal(props) {
             const fileData = await contract.methods.files(props.fileIndex).call();
         
             setFiledata(fileData);
-            console.log('pulled fila data', fileData.fileHash, fileData.fileId);
+            console.log('pulled fila data', fileData.fileHash, fileData.fileName);
             
-            await contract.methods.updateFile(uploadResult.path, uploadResult.size, filetype, props.fileIndex, 100).send({ from: accounts[0] }).on('transactionHash', (hash) => {
+            await contract.methods.updateFile(uploadResult.path, uploadResult.size, filetype, filename, props.fileIndex, 100).send({ from: accounts[0] }).on('transactionHash', (hash) => {
                 setBuffer(null);
                 setfileType(null);
                 setfileName(null);
@@ -66,6 +72,7 @@ function UpdateFileModal(props) {
             
         } catch (err) {
             console.log(err)
+            closeModalFunc();
         }  
         
     }
@@ -85,6 +92,7 @@ function UpdateFileModal(props) {
                 <input
                 type="file"
                 // value={uploadfile}
+                accept=".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document, .txt"
                 onChange={captureFile}
                 // onChange={(e) => setUploadfile(e.target.files[0])}
                 />

@@ -35,6 +35,7 @@ function AddFileModal( {closeModal}) {
             if(filetype === ''){
                 setfileType('none');
             }
+
             await contract.methods.uploadFile(uploadResult.path, uploadResult.size, filetype, filename, description).send({ from: accounts[0] }).on('transactionHash', (hash) => {
                setBuffer(null);
                setfileType(null);
@@ -46,6 +47,7 @@ function AddFileModal( {closeModal}) {
             
         } catch (err) {
             console.log(err)
+            closeModalFunc();
         }
         
     }
@@ -61,7 +63,8 @@ function AddFileModal( {closeModal}) {
         reader.onloadend = () => {
             setBuffer(Buffer(reader.result));
             setfileType(file.type);
-            setfileName(file.name);
+            const fileNameFilter = file.name.split(".")
+            setfileName(fileNameFilter[0]);
 
         }
       }
@@ -88,6 +91,7 @@ function AddFileModal( {closeModal}) {
                     <div className="form-input">
                     <input
                     type="file"
+                    accept=".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document, .txt"
                     onChange={captureFile}
                     />
                     </div>

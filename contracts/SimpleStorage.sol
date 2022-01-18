@@ -61,6 +61,7 @@ contract SimpleStorage {
         string fileHash,
         uint256 fileSize,
         string fileType,
+        string fileName,
         uint256 uploadTime,
         address uploader
     );
@@ -132,6 +133,7 @@ contract SimpleStorage {
         string memory _fileHash,
         uint256 _fileSize,
         string memory _fileType,
+        string memory _fileName,
         uint256 _fileID,
         uint256 _changeValue
     ) public {
@@ -139,6 +141,7 @@ contract SimpleStorage {
         require(bytes(_fileHash).length > 0);
         // Make sure file type exists
         require(bytes(_fileType).length > 0);
+        require(bytes(_fileName).length > 0);
         // Make sure uploader address exists
         require(msg.sender != address(0));
         // Make sure file size is more than 0
@@ -150,6 +153,7 @@ contract SimpleStorage {
         files[_fileID].fileHash = _fileHash;
         files[_fileID].fileSize = _fileSize;
         files[_fileID].fileType = _fileType;
+        files[_fileID].fileName = _fileName;
         files[_fileID].uploadTime = block.timestamp;
         files[_fileID].uploader = msg.sender;
 
@@ -170,6 +174,7 @@ contract SimpleStorage {
             _fileHash,
             _fileSize,
             _fileType,
+            _fileName,
             block.timestamp,
             msg.sender
         );
