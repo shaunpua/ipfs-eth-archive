@@ -7,6 +7,7 @@ import AddFileModal from "./components/AddFileModal";
 import UpdateFileModal from "./components/UpdateFileModal";
 import { convertBytes } from '../extraFunctions';
 import moment from 'moment'
+import { IoSync} from "react-icons/io5";
 
 
 function HomePage() {
@@ -156,20 +157,20 @@ function HomePage() {
               {/* <h3>File count is: {files[1].fileSize}</h3> */}
               <button className="upload-button" onClick={()=> {setOpenmodal(true)}}>Create +</button>
               <div className="home-file-descriptions">
-                  <p>ID</p>
-                  <p>Name</p>
-                  <p>Description</p>
-                  <p>Type</p>
-                  <p>Size</p>
-                  <p>Date</p>
-                  <p>Uploader</p>
-                  <p>Hash</p>
+                  <p style={{width: "20px", marginLeft: "25px"}}>ID</p>
+                  <p style={{width: "110px", marginLeft: "5px"}}>Name</p>
+                  <p style={{width: "110px", marginLeft: "25px"}}>Description</p>
+                  <p style={{width: "60px", marginLeft: "105px"}}>Type</p>
+                  <p style={{width: "40px", marginLeft: "35px"}}>Size</p>
+                  <p style={{width: "110px", marginLeft: "30px"}}>Date</p>
+                  <p style={{width: "110px", marginLeft: "50px"}}>Uploader</p>
+                  <p style={{width: "110px", marginLeft: "10px"}}>Hash</p>
               </div>
               
               <div className="home-files-container">
                 {files.map((file, key) => {
                   return (<div className="file-section">
-                     <input
+                  <input
                     type="checkbox"
                     
                     
@@ -178,7 +179,31 @@ function HomePage() {
                       handleOnChange(key, file.fileId)
                     }}
                   />
-                  <p>{file.fileId}</p>
+                  <div className="file-section-item" style={{width: "20px", marginLeft: "10px" }} >{file.fileId}</div>
+                  <div className="file-section-item" style={{width: "120px", marginLeft: "5px"}}>{file.fileName}</div>
+                  <div className="file-section-item" style={{width: "200px", marginLeft: "15px"}}>{file.fileDescription}</div>
+                  <div className="file-section-item" style={{width: "80px", marginLeft: "15px"}}>
+                  
+                  {file.fileType == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' ? <p>docx/doc</p>: file.fileType }
+                  </div>
+                  <div className="file-section-item" style={{width: "60px", marginLeft: "10px"}}>{convertBytes(file.fileSize)}</div>
+                  <div className="file-section-item" style={{width: "150px", marginLeft: "10px"}}>{moment.unix(file.uploadTime).format('h:mm:ss A M/D/Y')}</div>
+                  <div className="file-section-item" style={{width: "110px", marginLeft: "10px"}}><a
+                            href={"https://etherscan.io/address/" + file.uploader}
+                            rel="noopener noreferrer"
+                            target="_blank">
+                            {file.uploader.substring(0,10)}...
+                          </a></div>
+                  <div className="file-section-item" style={{width: "110px", marginLeft: "10px"}}><a
+                            href={"https://ipfs.infura.io/ipfs/" + file.fileHash}
+                            rel="noopener noreferrer"
+                            target="_blank">
+                            {file.fileHash.substring(0,10)}...
+                          </a></div>
+
+                  
+                  
+                  {/* <p>{file.fileId}</p>
                   <p>{file.fileName}</p>
                   <p>{file.fileDescription}</p>
                   <p>{file.fileType}</p>
@@ -195,11 +220,12 @@ function HomePage() {
                             rel="noopener noreferrer"
                             target="_blank">
                             {file.fileHash.substring(0,10)}...
-                          </a></p>
-                  <button onClick={()=> {
+                          </a></p> */}
+                  <button className="update-button" onClick={()=> {
                     setUpdatemodal(true)
                     setFileID(file.fileId)
-                    }}>Update</button>
+                    }}><IoSync  size="30px" /></button>
+                  <div  className="file-section-lvdot"></div>
                   
                 </div>)
                 })}

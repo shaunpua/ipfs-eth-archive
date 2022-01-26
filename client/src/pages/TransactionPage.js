@@ -65,14 +65,14 @@ function TransactionPage() {
               <h3>Transaction count is: {transactionCount}</h3>
             
               <div className="home-file-descriptions">
-                  <p>File Name</p>
-                  <p>File Hash</p>
-                  <p>File Size</p>
-                  <p>Uploader</p>
-                  <p>Uploader Address</p>
-                  <p>Transaction Type</p>
-                  <p>Change Level</p>
-                  <p>Upload Date</p>
+                  <p style={{width: "90px", marginLeft: "10px"}}>File Name</p>
+                  <p style={{width: "90px", marginLeft: "100px"}}>File Hash</p>
+                  <p style={{width: "70px", marginLeft: "40px"}}>File Size</p>
+                  <p style={{width: "80px", marginLeft: "20px"}}>Uploader</p>
+                  <p style={{width: "80px", marginLeft: "30px"}}>Address</p>
+                  <p style={{width: "110px", marginLeft: "10px"}}>Transaction Type</p>
+                  <p style={{width: "90px", marginLeft: "10px"}}>Change Level</p>
+                  <p style={{width: "90px", marginLeft: "10px"}}>Upload Date</p>
                   
               </div>
               
@@ -80,25 +80,25 @@ function TransactionPage() {
               {transactions.map((transaction, key) => {
                   return (<div className="file-section">
                   
-                  <p>{transaction.fileName}</p>
-                  <p><a
+                  <div className="file-section-item" style={{width: "180px", marginLeft: "10px" }}>{transaction.fileName}</div>
+                  <div className="file-section-item" style={{width: "120px", marginLeft: "10px" }} ><a
                             href={"https://ipfs.infura.io/ipfs/" + transaction.fileHash}
                             rel="noopener noreferrer"
                             target="_blank">
                             {transaction.fileHash.substring(0,10)}...
-                          </a></p>
-                    <p>{convertBytes(transaction.fileSize)}</p>
-                  <p>{transaction.userName}</p>
-                  <p><a
+                          </a></div>
+                  <div className="file-section-item" style={{width: "80px", marginLeft: "10px" }}>{convertBytes(transaction.fileSize)}</div>
+                  <div className="file-section-item" style={{width: "100px", marginLeft: "10px" }}>{transaction.userName}</div>
+                  <div className="file-section-item" style={{width: "120px", marginLeft: "10px" }}><a
                             href={"https://etherscan.io/address/" + transaction.userAddress}
                             rel="noopener noreferrer"
                             target="_blank">
                             {transaction.userAddress.substring(0,10)}...
-                          </a></p>
-                <p>{transaction.transactionType}</p>
-                <p>{transaction.changeLevel}</p>
-                <p>{moment.unix(transaction.uploadTime).format('h:mm:ss A M/D/Y')}</p>
-                
+                          </a></div>
+                <div className="file-section-item" style={{width: "100px", marginLeft: "10px" }}>{transaction.transactionType}</div>
+                <div className="file-section-item" style={{width: "60px", marginLeft: "10px" }}>{transaction.changeLevel}</div>
+                <div className="file-section-item" style={{width: "140px", marginLeft: "10px" }}>{moment.unix(transaction.uploadTime).format('h:mm:ss A M/D/Y')}</div>
+                <div  className="file-section-lvdot"></div>
                   
                 </div>)
                 })}
