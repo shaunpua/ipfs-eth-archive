@@ -22,14 +22,16 @@ function HomePage() {
     const [updatemodal, setUpdatemodal] = useState(false);
     const [displayDelete, setDisplayDelete] = useState(false);
     const [loggedIn, setLoggedIn] = useState(false);
+  // const [contractname, setContractname] = useState('');
 
-    // const [contractname, setContractname] = useState('');
-
-
+    //button disabler states
+    const [deleteDisable, setDeleteDisable] = useState(false);
+    
     const navigate = useNavigate();
 
     const BlockchainContextImport =  useContext(BlockchainContext)
     const {web3, contract, accounts} = BlockchainContextImport;
+
     // console.log('context provider data ',web3, contract, accounts[0]);
     
     useEffect(()=>{
@@ -39,11 +41,6 @@ function HomePage() {
                 const checkLogin = await contract.methods.checkIsUserLogged(accounts[0]).call();
                 console.log(checkLogin, 'LOGIN STATE 1 /home')
 
-                // await contract.methods.name().call(function(err,res){
-                //   setContractname(res);
-                  
-                // });
-      
                 await contract.methods.fileIDs().call(function(err,res){
                   setFilecount(res);
                   
@@ -59,8 +56,8 @@ function HomePage() {
                 //   console.log(res)
                 //   setUserdata(res);
                 // });
-                
                 console.log(loggedIn, 'login state 2')
+
                  if (checkLogin === true){
                    setLoggedIn(true);
                  } else {
@@ -92,8 +89,6 @@ function HomePage() {
         }
 
         // setFiles(files =>[...files, file]);
-        
-        
         
       }
 
@@ -130,12 +125,14 @@ function HomePage() {
     const deleteFiles = async (deletedID) => {
 
       console.log(deletedID);
-
+      setDeleteDisable(true);
       try {
         await contract.methods.deleteFile(deletedID).send({ from: accounts[0] });
+        setDeleteDisable(false);
         window.location.reload(false);
 
       } catch (err) {
+        setDeleteDisable(false);
         setDisplayDelete(false);
         console.log(err)
       }  
@@ -200,31 +197,11 @@ function HomePage() {
                             target="_blank">
                             {file.fileHash.substring(0,10)}...
                           </a></div>
-
-                  
-                  
-                  {/* <p>{file.fileId}</p>
-                  <p>{file.fileName}</p>
-                  <p>{file.fileDescription}</p>
-                  <p>{file.fileType}</p>
-                  <p>{convertBytes(file.fileSize)}</p>
-                  <p>{moment.unix(file.uploadTime).format('h:mm:ss A M/D/Y')}</p>
-                  <p><a
-                            href={"https://etherscan.io/address/" + file.uploader}
-                            rel="noopener noreferrer"
-                            target="_blank">
-                            {file.uploader.substring(0,10)}...
-                          </a></p>
-                  <p><a
-                            href={"https://ipfs.infura.io/ipfs/" + file.fileHash}
-                            rel="noopener noreferrer"
-                            target="_blank">
-                            {file.fileHash.substring(0,10)}...
-                          </a></p> */}
                   <button className="update-button" onClick={()=> {
                     setUpdatemodal(true)
                     setFileID(file.fileId)
                     }}><IoSync  size="30px" /></button>
+                    
                   <div  className="file-section-lvdot"></div>
                   
                 </div>)
@@ -241,7 +218,7 @@ function HomePage() {
                     <h2>Are you sure?</h2>
                 </div>
                 
-                <button className="register-button" onClick={()=> {deleteFiles(deletedID)}}>Delete</button>
+                <button disabled={deleteDisable} className="register-button" onClick={()=> {deleteFiles(deletedID)}}>Delete</button>
                 <button className="register-button" onClick={()=> {setDisplayDelete(false)}}>Cancel</button>
                 </div>
              </div>}

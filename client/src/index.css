@@ -156,6 +156,11 @@ button:hover {
   background-color: #5c6ae4;
 }
 
+.register-button:disabled {
+  background-color: #707285;
+  cursor: not-allowed;
+}
+
 .form-input {
   margin-top: 10px;
   margin-bottom: 10px;
@@ -293,6 +298,11 @@ button:hover {
 
 .logout-button:hover {
   background-color: #5c6ae4;
+}
+
+.logout-button:disabled {
+  background-color: #707285;
+  cursor: not-allowed;
 }
 
 .sidebar {

@@ -29,7 +29,7 @@ function TransactionPage() {
                 const transactionArray = await contract.methods.getAllTransactions().call();
 
                 // console.log(transactionArray);
-
+                transactionArray.reverse();
                 setTransactions(transactionArray);
                 
       
@@ -70,9 +70,9 @@ function TransactionPage() {
                   <p style={{width: "70px", marginLeft: "40px"}}>File Size</p>
                   <p style={{width: "80px", marginLeft: "20px"}}>Uploader</p>
                   <p style={{width: "80px", marginLeft: "30px"}}>Address</p>
-                  <p style={{width: "110px", marginLeft: "10px"}}>Transaction Type</p>
-                  <p style={{width: "90px", marginLeft: "10px"}}>Change Level</p>
-                  <p style={{width: "90px", marginLeft: "10px"}}>Upload Date</p>
+                  <p style={{width: "110px", marginLeft: "25px"}}>Transaction Type</p>
+                  <p style={{width: "90px", marginLeft: "20px"}}>Upload Date</p>
+                  <p style={{width: "90px", marginLeft: "50px"}}>Change Level</p>
                   
               </div>
               
@@ -89,16 +89,17 @@ function TransactionPage() {
                           </a></div>
                   <div className="file-section-item" style={{width: "80px", marginLeft: "10px" }}>{convertBytes(transaction.fileSize)}</div>
                   <div className="file-section-item" style={{width: "100px", marginLeft: "10px" }}>{transaction.userName}</div>
-                  <div className="file-section-item" style={{width: "120px", marginLeft: "10px" }}><a
+                  <div className="file-section-item" style={{width: "100px", marginLeft: "10px" }}><a
                             href={"https://etherscan.io/address/" + transaction.userAddress}
                             rel="noopener noreferrer"
                             target="_blank">
                             {transaction.userAddress.substring(0,10)}...
                           </a></div>
                 <div className="file-section-item" style={{width: "100px", marginLeft: "10px" }}>{transaction.transactionType}</div>
-                <div className="file-section-item" style={{width: "60px", marginLeft: "10px" }}>{transaction.changeLevel}</div>
                 <div className="file-section-item" style={{width: "140px", marginLeft: "10px" }}>{moment.unix(transaction.uploadTime).format('h:mm:ss A M/D/Y')}</div>
-                <div  className="file-section-lvdot"></div>
+                <div className="file-section-item" style={{width: "40px", marginLeft: "40px" }}>{transaction.changeLevel}</div>
+                {transaction.changeLevel == 0 ? <div  className="file-section-lvdot"></div>: null }
+                {transaction.changeLevel > 0 ? <div  className="file-section-lvdot" style={{backgroundColor: "red"}}></div>: null }
                   
                 </div>)
                 })}

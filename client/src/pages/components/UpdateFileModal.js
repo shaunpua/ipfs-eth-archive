@@ -10,6 +10,9 @@ function UpdateFileModal(props) {
     const [filetype, setfileType] = useState(null);
     const [filename, setfileName] = useState(null);
     const [buffer, setBuffer] = useState(null);
+
+    //button disable states
+    const [updateDisable, setUpdateDisable] = useState(false);
     const BlockchainContextImport =  useContext(BlockchainContext)
     const {web3, contract, accounts} = BlockchainContextImport;
 
@@ -47,7 +50,7 @@ function UpdateFileModal(props) {
       const updateFile = async (e) => {
         
         e.preventDefault();
-       
+        setUpdateDisable(true);
         try {
             const uploadResult = await ipfs.add(Buffer.from(buffer));
             console.log(uploadResult);
@@ -67,11 +70,12 @@ function UpdateFileModal(props) {
                 setfileType(null);
                 setfileName(null);
              });
-            
+            setUpdateDisable(false);
             window.location.reload(false);
             
         } catch (err) {
             console.log(err)
+            setUpdateDisable(false);
             closeModalFunc();
         }  
         
@@ -98,7 +102,7 @@ function UpdateFileModal(props) {
                 />
                 </div>
                 
-                <button className="register-button">Upload File</button>
+                <button  disabled={updateDisable} className="register-button">Upload File</button>
             </form>
         </div>
         

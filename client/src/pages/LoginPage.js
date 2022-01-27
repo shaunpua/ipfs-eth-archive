@@ -5,15 +5,17 @@ import NavBar1 from "./components/Navbar1"
 
 function LoginPage() {
     const [password, setPassword] = useState('');
+    const [address, setAddress] = useState('');
     const navigate = useNavigate();
+
+    //button disabler states
+    const [loginDisable, setloginDisable] = useState(false);
 
     const BlockchainContextImport =  useContext(BlockchainContext)
     const {web3, contract, accounts} = BlockchainContextImport;
-    console.log('context provider data ',web3, contract, accounts[0]);
-
 
      useEffect(()=>{
-        
+        setAddress(accounts[0]);
         const checkIfLoggedIn = async () => {
           // Stores a given value, 5 by default.
           console.log('check if logge din function')
@@ -24,39 +26,30 @@ function LoginPage() {
                    navigate('/');
                  } 
             } catch (err){
-                console.log(err)
-                
-            }
-
-        
+                console.log(err)     
+            }    
         }
-        
         checkIfLoggedIn()
-        
-        
-      }, [])
+      }, [address, accounts])
 
     const loginSubmit = async (e) => {
         e.preventDefault();
-
-         try {
+        setloginDisable(true);
+        try {
                 // const loginCAll = await contract.methods.login(accounts[0], password).call();
-                const loginCAll = await contract.methods.login(accounts[0], password).send({ from: accounts[0] });
-                
-                console.log(loginCAll, 'login CALL here')
-                
-                navigate('/');
-                
-                
-            } catch (err){
-                console.log(err)
-                alert('Error login account to blockchain!')
-                
-            }
-
-        
-        
+            const loginCAll = await contract.methods.login(accounts[0], password).send({ from: accounts[0] });
+            console.log(loginCAll, 'login CALL here')
+            setloginDisable(false);
+            navigate('/');
+                        
+        } catch (err){
+            console.log(err)
+            setloginDisable(false);
+            alert('Error login account to blockchain!')              
+        }    
+     
     }
+
     return (
         <div className="LoginPage">
             <NavBar1/>
@@ -64,7 +57,7 @@ function LoginPage() {
             <h2>Login</h2>
             <hr className="form-break" />
             <form onSubmit={loginSubmit}>
-            <label style={{fontWeight: '450'}}>Your current address is {accounts[0]}</label>
+            <label style={{fontWeight: '450'}}>Your current address is {address}</label>
             <br/>
                 <div className="form-input" style={{marginTop: '20px'}}>
                     <label>Password</label>
@@ -75,23 +68,16 @@ function LoginPage() {
                     className="auth-input"
                     placeholder="Enter Password"
                     onChange={(e) => setPassword(e.target.value)}
-                    />
-                        
+                    />        
                 </div>
-           
-            
-                <button className="register-button">Login </button>
+                <button disabled={loginDisable} className="register-button">Login </button>
                 <div class="form-redirect">
                         <span>Dont have an account yet?</span>
                         
                         <Link to="/register">Register</Link>
                     </div>
             </form>
-
             </div>
-           
-        
-             {/* <Link to="/">Login Button </Link> */}
         </div>
     )
 }
