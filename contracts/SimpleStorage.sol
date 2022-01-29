@@ -21,6 +21,7 @@ contract SimpleStorage {
         uint256 uploadTime;
         address uploader;
         uint256 lastChange;
+        uint256 lastSize;
     }
 
     struct UserDetail {
@@ -40,6 +41,7 @@ contract SimpleStorage {
         string transactionType;
         uint256 changeLevel;
         uint256 uploadTime;
+        uint256 lastSize;
     }
     Transaction[] transactions;
 
@@ -56,7 +58,8 @@ contract SimpleStorage {
         string fileDescription,
         uint256 uploadTime,
         address uploader,
-        uint256 lastChange
+        uint256 lastChange,
+        uint256 lastSize
     );
 
     event FileUpdated(
@@ -66,7 +69,8 @@ contract SimpleStorage {
         string fileName,
         uint256 uploadTime,
         address uploader,
-        uint256 lastChange
+        uint256 lastChange,
+        uint256 lastSize
     );
 
     constructor() public {}
@@ -105,6 +109,7 @@ contract SimpleStorage {
             _fileDescription,
             block.timestamp,
             msg.sender,
+            0,
             0
         );
 
@@ -117,6 +122,7 @@ contract SimpleStorage {
         temp.fileSize = _fileSize;
         temp.transactionType = "ADD";
         temp.changeLevel = 0;
+        temp.lastSize = 0;
         temp.uploadTime = block.timestamp;
         transactions.push(temp);
 
@@ -131,6 +137,7 @@ contract SimpleStorage {
             _fileDescription,
             block.timestamp,
             msg.sender,
+            0,
             0
         );
     }
@@ -141,7 +148,8 @@ contract SimpleStorage {
         string memory _fileType,
         string memory _fileName,
         uint256 _fileID,
-        uint256 _changeValue
+        uint256 _changeValue,
+        uint256 _lastSize
     ) public {
         // Make sure the file hash exists
         require(bytes(_fileHash).length > 0);
@@ -163,6 +171,7 @@ contract SimpleStorage {
         files[_fileID].uploadTime = block.timestamp;
         files[_fileID].uploader = msg.sender;
         files[_fileID].lastChange = _changeValue;
+        files[_fileID].lastSize = _lastSize;
 
         Transaction memory temp;
         temp.userAddress = msg.sender;
@@ -174,6 +183,7 @@ contract SimpleStorage {
         temp.transactionType = "UPDATE";
         temp.changeLevel = _changeValue;
         temp.uploadTime = block.timestamp;
+        temp.lastSize = _lastSize;
         transactions.push(temp);
 
         transactionCount++;
@@ -185,7 +195,8 @@ contract SimpleStorage {
             _fileName,
             block.timestamp,
             msg.sender,
-            _changeValue
+            _changeValue,
+            _lastSize
         );
     }
 

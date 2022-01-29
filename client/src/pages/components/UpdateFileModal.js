@@ -1,5 +1,6 @@
 import React, {useContext, useState, useEffect} from "react";
 import BlockchainContext from "../../BlockchainContext";
+//const Axios = require('axios');
 import Axios from "axios";
 
 const ipfsClient = require('ipfs-http-client')
@@ -127,10 +128,19 @@ function UpdateFileModal(props) {
             console.log("processed content old: "+contents_old);
             console.log("processed content new: "+contents_new);
             const EditDistance=require("../../EditDistance")
-            const EditNum=EditDistance.levenshtein(contents_old,contents_new);
-            console.log("EditDistance is:"+EditNum );
+            var EditNum=EditDistance.levenshtein(contents_old,contents_new);
+            const changesNum=EditNum;
+            console.log("Num of individual changes: "+changesNum);
+            var contents_old_len=contents_old.length;
+            var contents_new_len=contents_new.length;
+            console.log("old content len: "+contents_old_len+"\nnew content len: "+contents_new_len);
+            //var largestfile_len=Math.max(contents_old_len,contents_new_len);
+            var largestfile_len=contents_old_len;
+            console.log("Largest file len: "+largestfile_len);
+            EditNum=EditNum/largestfile_len*100;
+            console.log("EditDistance or percentage of file changed is:"+EditNum );
 
-            await contract.methods.updateFile(uploadResult.path, uploadResult.size, filetype, filename, props.fileIndex,EditNum).send({ from: accounts[0] }).on('transactionHash', (hash) => {
+            await contract.methods.updateFile(uploadResult.path, uploadResult.size, filetype, filename, props.fileIndex,changesNum, largestfile_len).send({ from: accounts[0] }).on('transactionHash', (hash) => {
                 setBuffer(null);
                 setfileType(null);
                 setfileName(null);
