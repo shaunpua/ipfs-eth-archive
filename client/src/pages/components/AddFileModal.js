@@ -8,10 +8,14 @@ const ipfs = ipfsClient.create('https://ipfs.infura.io:5001/api/v0')
 function AddFileModal( {closeModal}) {
     
     const [description, setDescription] = useState('');
-    // const [uploadfile, setUploadfile] = useState([])
     const [filetype, setfileType] = useState(null);
     const [filename, setfileName] = useState(null);
     const [buffer, setBuffer] = useState(null);
+
+    //button disable states
+    const [uploadDisable, setUploadDisable] = useState(false);
+
+
     const BlockchainContextImport =  useContext(BlockchainContext)
     const {web3, contract, accounts} = BlockchainContextImport;
 
@@ -26,7 +30,7 @@ function AddFileModal( {closeModal}) {
     const uploadFile = async (e) => {
         
         e.preventDefault();
-       
+        setUploadDisable(true);
         try {
             const uploadResult = await ipfs.add(Buffer.from(buffer));
             console.log(uploadResult);
@@ -35,17 +39,20 @@ function AddFileModal( {closeModal}) {
             if(filetype === ''){
                 setfileType('none');
             }
+
             await contract.methods.uploadFile(uploadResult.path, uploadResult.size, filetype, filename, description).send({ from: accounts[0] }).on('transactionHash', (hash) => {
                setBuffer(null);
                setfileType(null);
                setfileName(null);
             });
-            
+            setUploadDisable(false);
             window.location.reload(false);
             // closeModalFunc();
             
         } catch (err) {
             console.log(err)
+            setUploadDisable(false);
+            closeModalFunc();
         }
         
     }
@@ -61,7 +68,8 @@ function AddFileModal( {closeModal}) {
         reader.onloadend = () => {
             setBuffer(Buffer(reader.result));
             setfileType(file.type);
-            setfileName(file.name);
+            const fileNameFilter = file.name.split(".")
+            setfileName(fileNameFilter[0]);
 
         }
       }
@@ -88,11 +96,12 @@ function AddFileModal( {closeModal}) {
                     <div className="form-input">
                     <input
                     type="file"
+                    accept=".docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document, .txt, application/pdf"
                     onChange={captureFile}
                     />
                     </div>
                     
-                    <button className="register-button">Upload File</button>
+                    <button  disabled={uploadDisable} className="register-button">Upload File</button>
                 </form>
             </div>
             

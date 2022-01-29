@@ -4,7 +4,6 @@ pragma solidity ^0.8.0;
 contract SimpleStorage {
     // data
     string public name = "ArchStorage";
-    uint256 storedData;
 
     uint256 public fileIDs = 0;
     uint256 public fileNum = 0;
@@ -21,6 +20,7 @@ contract SimpleStorage {
         string fileDescription;
         uint256 uploadTime;
         address uploader;
+        uint256 lastChange;
     }
 
     struct UserDetail {
@@ -33,6 +33,7 @@ contract SimpleStorage {
     struct Transaction {
         address userAddress;
         string userName;
+        uint256 fileId;
         string fileName;
         string fileHash;
         uint256 fileSize;
@@ -54,15 +55,18 @@ contract SimpleStorage {
         string fileName,
         string fileDescription,
         uint256 uploadTime,
-        address uploader
+        address uploader,
+        uint256 lastChange
     );
 
     event FileUpdated(
         string fileHash,
         uint256 fileSize,
         string fileType,
+        string fileName,
         uint256 uploadTime,
-        address uploader
+        address uploader,
+        uint256 lastChange
     );
 
     constructor() public {}
@@ -100,12 +104,14 @@ contract SimpleStorage {
             _fileName,
             _fileDescription,
             block.timestamp,
-            msg.sender
+            msg.sender,
+            0
         );
 
         Transaction memory temp;
         temp.userAddress = msg.sender;
         temp.userName = user[msg.sender].name;
+        temp.fileId = fileIDs;
         temp.fileName = _fileName;
         temp.fileHash = _fileHash;
         temp.fileSize = _fileSize;
@@ -124,7 +130,8 @@ contract SimpleStorage {
             _fileName,
             _fileDescription,
             block.timestamp,
-            msg.sender
+            msg.sender,
+            0
         );
     }
 
@@ -132,6 +139,7 @@ contract SimpleStorage {
         string memory _fileHash,
         uint256 _fileSize,
         string memory _fileType,
+        string memory _fileName,
         uint256 _fileID,
         uint256 _changeValue
     ) public {
@@ -139,6 +147,7 @@ contract SimpleStorage {
         require(bytes(_fileHash).length > 0);
         // Make sure file type exists
         require(bytes(_fileType).length > 0);
+        require(bytes(_fileName).length > 0);
         // Make sure uploader address exists
         require(msg.sender != address(0));
         // Make sure file size is more than 0
@@ -150,12 +159,15 @@ contract SimpleStorage {
         files[_fileID].fileHash = _fileHash;
         files[_fileID].fileSize = _fileSize;
         files[_fileID].fileType = _fileType;
+        files[_fileID].fileName = _fileName;
         files[_fileID].uploadTime = block.timestamp;
         files[_fileID].uploader = msg.sender;
+        files[_fileID].lastChange = _changeValue;
 
         Transaction memory temp;
         temp.userAddress = msg.sender;
         temp.userName = user[msg.sender].name;
+        temp.fileId = _fileID;
         temp.fileName = files[_fileID].fileName;
         temp.fileHash = _fileHash;
         temp.fileSize = _fileSize;
@@ -170,8 +182,10 @@ contract SimpleStorage {
             _fileHash,
             _fileSize,
             _fileType,
+            _fileName,
             block.timestamp,
-            msg.sender
+            msg.sender,
+            _changeValue
         );
     }
 
@@ -185,6 +199,7 @@ contract SimpleStorage {
             Transaction memory temp;
             temp.userAddress = msg.sender;
             temp.userName = user[msg.sender].name;
+            temp.fileId = _fileID[i];
             temp.fileName = files[_fileID[i]].fileName;
             temp.fileHash = files[_fileID[i]].fileHash;
             temp.fileSize = files[_fileID[i]].fileSize;
@@ -247,37 +262,7 @@ contract SimpleStorage {
         user[_address].isUserLoggedIn = false;
     }
 
-    // function addTransaction(
-    //     address _userAddress,
-    //     string memory _userName,
-    //     string memory _fileName,
-    //     string memory _fileHash,
-    //     string memory _transactionType,
-    //     uint256 _changeLevel
-    // ) public {
-    //     Transaction memory temp;
-    //     temp.userAddress = _userAddress;
-    //     temp.userName = _userName;
-    //     temp.fileName = _fileName;
-    //     temp.fileHash = _fileHash;
-    //     temp.transactionType = _transactionType;
-    //     temp.changeLevel = _changeLevel;
-    //     transactions.push(temp);
-
-    //     transactionCount++;
-    //     emit transactionAdded(temp);
-
-    // }
-
     function getAllTransactions() public view returns (Transaction[] memory) {
         return transactions;
-    }
-
-    function set(uint256 x) public {
-        storedData = x;
-    }
-
-    function get() public view returns (uint256) {
-        return storedData;
     }
 }

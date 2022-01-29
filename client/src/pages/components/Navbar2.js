@@ -1,4 +1,4 @@
-import React, {useContext} from 'react'
+import React, {useState, useContext} from 'react'
 import {useNavigate } from "react-router-dom";
 import BlockchainContext from "../../BlockchainContext";
 
@@ -6,27 +6,27 @@ import BlockchainContext from "../../BlockchainContext";
 function Navbar2() {
     const navigate = useNavigate();
 
+    //button disabler states
+    const [signoutDisable, setSignoutDisable] = useState(false);
 
     const BlockchainContextImport =  useContext(BlockchainContext)
     const {web3, contract, accounts} = BlockchainContextImport;
-    // console.log('context provider data ',web3, contract, accounts[0]);
-
+    
     const logoutSubmit = async () => {
+
+        setSignoutDisable(true);
         try {
-          // const loginCAll = await contract.methods.login(accounts[0], password).call();
-          await contract.methods.logout(accounts[0]).send({ from: accounts[0] });
-                
-            
-                
-            navigate('/auth');
-                
+            await contract.methods.logout(accounts[0]).send({ from: accounts[0] });  
+            setSignoutDisable(false);  
+            navigate('/auth');          
                 
         } catch (err){
             console.log(err)
-            
+            setSignoutDisable(false);
                 
           }
     }
+
     return (
         <div className="nav-home">
             
@@ -38,7 +38,7 @@ function Navbar2() {
             <div className="nav-home-right">
                 
                 <h2 className="nav-home-account">Account: {accounts[0]}</h2>
-                <button className="logout-button" onClick={logoutSubmit}>Sign out</button>
+                <button disabled={signoutDisable} className="logout-button" onClick={logoutSubmit}>Sign out</button>
             </div>
         </div>
     )

@@ -156,6 +156,11 @@ button:hover {
   background-color: #5c6ae4;
 }
 
+.register-button:disabled {
+  background-color: #707285;
+  cursor: not-allowed;
+}
+
 .form-input {
   margin-top: 10px;
   margin-bottom: 10px;
@@ -276,6 +281,7 @@ button:hover {
   font-size: 0.8rem;
   color: rgb(34, 32, 32);
   font-weight: 500;
+  /* background-color: #ffd105; */
 }
 
 .logout-button {
@@ -293,6 +299,11 @@ button:hover {
 
 .logout-button:hover {
   background-color: #5c6ae4;
+}
+
+.logout-button:disabled {
+  background-color: #707285;
+  cursor: not-allowed;
 }
 
 .sidebar {
@@ -374,7 +385,7 @@ button:hover {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding-left: 35px;
+  padding-left: 25px;
   padding-top: 20px;
 }
 
@@ -401,41 +412,72 @@ button:hover {
   background-color: #5c6ae4;
 }
 
+.update-button {
+  width: 30px;
+  padding: 4px 4px;
+  background-color: transparent;
+  color: #5562da;
+  border: 0px;
+}
+.update-button:hover {
+  color: #1f298a;
+}
+
 .home-file-descriptions {
   display: flex;
-  min-width: 1000px;
+  min-width: 1050px;
   align-items: center;
-  justify-content: space-between;
+  justify-content: start;
   margin-top: 15px;
   height: 50px;
   border-bottom: 0.25px solid rgb(204, 204, 204);
 }
 
 .home-file-descriptions p {
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   font-family: Roboto;
   font-weight: 300;
+  text-align: left;
 }
 
 .home-files-container {
   background-color: #fafaf8;
-  min-width: 1000px;
-  min-height: auto;
-
+  min-width: 1050px;
+  max-height: 400px;
   overflow-y: scroll;
-  overflow-x: scroll;
 }
 
 .file-section {
   display: flex;
-  width: 100%;
+  width: 1050px;
+  height: 40px;
   align-items: center;
-  justify-content: space-between;
-  min-height: 30px;
+  justify-content: start;
   padding: 5px 5px;
   border-bottom: 0.25px solid rgb(204, 204, 204);
 }
 
+.file-section-item {
+  font-size: 0.85rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: left;
+  /* overflow-x: hidden;
+  overflow-y: hidden; */
+}
+
+.file-section:hover {
+  background-color: #e9e9e9;
+}
+
+.file-section-lvdot {
+  height: 25px;
+  width: 25px;
+  background-color: rgb(163, 163, 163);
+  border-radius: 50%;
+  margin-left: 25px;
+}
 .TransactionPage {
   display: flex;
   flex-direction: column;
