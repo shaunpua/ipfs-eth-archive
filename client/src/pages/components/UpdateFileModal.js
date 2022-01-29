@@ -61,11 +61,13 @@ function UpdateFileModal(props) {
             }
 
             const fileData = await contract.methods.files(props.fileIndex).call();
-        
+            
             setFiledata(fileData);
             console.log('pulled fila data', fileData.fileHash, fileData.fileName);
             
-            await contract.methods.updateFile(uploadResult.path, uploadResult.size, filetype, filename, props.fileIndex, 100).send({ from: accounts[0] }).on('transactionHash', (hash) => {
+
+            // REPLACE 67 WITH LEVENSTEIN OUTPUT
+            await contract.methods.updateFile(uploadResult.path, uploadResult.size, filetype, filename, props.fileIndex, 67).send({ from: accounts[0] }).on('transactionHash', (hash) => {
                 setBuffer(null);
                 setfileType(null);
                 setfileName(null);
@@ -95,10 +97,8 @@ function UpdateFileModal(props) {
                 <div className="form-input">
                 <input
                 type="file"
-                // value={uploadfile}
-                accept=".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document, .txt"
+                accept=".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document, .txt, application/pdf"
                 onChange={captureFile}
-                // onChange={(e) => setUploadfile(e.target.files[0])}
                 />
                 </div>
                 

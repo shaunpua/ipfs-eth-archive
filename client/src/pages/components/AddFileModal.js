@@ -8,7 +8,6 @@ const ipfs = ipfsClient.create('https://ipfs.infura.io:5001/api/v0')
 function AddFileModal( {closeModal}) {
     
     const [description, setDescription] = useState('');
-    // const [uploadfile, setUploadfile] = useState([])
     const [filetype, setfileType] = useState(null);
     const [filename, setfileName] = useState(null);
     const [buffer, setBuffer] = useState(null);
@@ -97,7 +96,7 @@ function AddFileModal( {closeModal}) {
                     <div className="form-input">
                     <input
                     type="file"
-                    accept=".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document, .txt"
+                    accept=".docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document, .txt, application/pdf"
                     onChange={captureFile}
                     />
                     </div>

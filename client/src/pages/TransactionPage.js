@@ -17,7 +17,7 @@ function TransactionPage() {
 
     useEffect(()=>{
         const load = async () => {
-          // Stores a given value, 5 by default.
+          
           try {
                 const checkLogin = await contract.methods.checkIsUserLogged(accounts[0]).call();
                 console.log(checkLogin, 'LOGIN STATE 1 /home')
@@ -28,13 +28,10 @@ function TransactionPage() {
                 
                 const transactionArray = await contract.methods.getAllTransactions().call();
 
-                // console.log(transactionArray);
+                
                 transactionArray.reverse();
                 setTransactions(transactionArray);
-                
-      
-                
-                
+                 
                 console.log(loggedIn, 'login state 2')
                  if (checkLogin === true){
                    setLoggedIn(true);
@@ -45,8 +42,6 @@ function TransactionPage() {
                 console.log(err)
                 
             }
-          
-    
         }
         if (typeof web3 !== 'undefined' && typeof accounts !== 'undefined' && typeof contract !== 'undefined') {
           load()
@@ -65,22 +60,23 @@ function TransactionPage() {
               <h3>Transaction count is: {transactionCount}</h3>
             
               <div className="home-file-descriptions">
-                  <p style={{width: "90px", marginLeft: "10px"}}>File Name</p>
-                  <p style={{width: "90px", marginLeft: "100px"}}>File Hash</p>
-                  <p style={{width: "70px", marginLeft: "40px"}}>File Size</p>
+                  <p style={{width: "20px", marginLeft: "10px"}}>ID</p>
+                  <p style={{width: "80px", marginLeft: "30px"}}>File Name</p>
+                  <p style={{width: "80px", marginLeft: "85px"}}>File Hash</p>
+                  <p style={{width: "70px", marginLeft: "50px"}}>File Size</p>
                   <p style={{width: "80px", marginLeft: "20px"}}>Uploader</p>
                   <p style={{width: "80px", marginLeft: "30px"}}>Address</p>
-                  <p style={{width: "110px", marginLeft: "25px"}}>Transaction Type</p>
-                  <p style={{width: "90px", marginLeft: "20px"}}>Upload Date</p>
-                  <p style={{width: "90px", marginLeft: "50px"}}>Change Level</p>
+                  <p style={{width: "60px", marginLeft: "30px"}}> Type</p>
+                  <p style={{width: "120px", marginLeft: "30px"}}>Upload Date</p>
+                  <p style={{width: "90px", marginLeft: "70px"}}>Change Level</p>
                   
               </div>
               
               <div className="home-files-container">
               {transactions.map((transaction, key) => {
                   return (<div className="file-section">
-                  
-                  <div className="file-section-item" style={{width: "180px", marginLeft: "10px" }}>{transaction.fileName}</div>
+                  <div className="file-section-item" style={{width: "40px", marginLeft: "10px" }}>{transaction.fileId}</div>
+                  <div className="file-section-item" style={{width: "150px", marginLeft: "10px" }}>{transaction.fileName}</div>
                   <div className="file-section-item" style={{width: "120px", marginLeft: "10px" }} ><a
                             href={"https://ipfs.infura.io/ipfs/" + transaction.fileHash}
                             rel="noopener noreferrer"
@@ -95,12 +91,13 @@ function TransactionPage() {
                             target="_blank">
                             {transaction.userAddress.substring(0,10)}...
                           </a></div>
-                <div className="file-section-item" style={{width: "100px", marginLeft: "10px" }}>{transaction.transactionType}</div>
-                <div className="file-section-item" style={{width: "140px", marginLeft: "10px" }}>{moment.unix(transaction.uploadTime).format('h:mm:ss A M/D/Y')}</div>
-                <div className="file-section-item" style={{width: "40px", marginLeft: "40px" }}>{transaction.changeLevel}</div>
+                <div className="file-section-item" style={{width: "80px", marginLeft: "10px" }}>{transaction.transactionType}</div>
+                <div className="file-section-item" style={{width: "170px", marginLeft: "10px" }}>{moment.unix(transaction.uploadTime).format('h:mm:ss A M/D/Y')}</div>
+                <div className="file-section-item" style={{width: "40px", marginLeft: "20px" }}>{transaction.changeLevel}</div>
                 {transaction.changeLevel == 0 ? <div  className="file-section-lvdot"></div>: null }
-                {transaction.changeLevel > 0 ? <div  className="file-section-lvdot" style={{backgroundColor: "red"}}></div>: null }
-                  
+                {transaction.changeLevel > 0 && transaction.changeLevel < 10 ? <div  className="file-section-lvdot" style={{backgroundColor: "green"}}></div>: null }
+                {transaction.changeLevel >= 10 && transaction.changeLevel < 50 ? <div  className="file-section-lvdot" style={{backgroundColor: "#ffd105"}}></div>: null } 
+                {transaction.changeLevel >= 50 ? <div  className="file-section-lvdot" style={{backgroundColor: "red"}}></div>: null } 
                 </div>)
                 })}
                 

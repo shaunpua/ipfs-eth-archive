@@ -31,9 +31,8 @@ function HomePage() {
 
     const BlockchainContextImport =  useContext(BlockchainContext)
     const {web3, contract, accounts} = BlockchainContextImport;
-
     // console.log('context provider data ',web3, contract, accounts[0]);
-    
+
     useEffect(()=>{
         const load = async () => {
           
@@ -87,9 +86,7 @@ function HomePage() {
           setFiles(files =>[...files, file]);
           setChecked(checked =>[...checked, false]);
         }
-
-        // setFiles(files =>[...files, file]);
-        
+        // setFiles(files =>[...files, file]);    
       }
 
     }
@@ -137,7 +134,9 @@ function HomePage() {
         console.log(err)
       }  
     }
-
+    // if (typeof contract === 'undefined') {
+    //   return <div>Loading Web3, accounts, and contract...</div>;
+    // }
     return (
         <div className="HomePage">
           <NavBar2/>
@@ -151,7 +150,6 @@ function HomePage() {
               <h3>File count: {fileNum}</h3>
               <h3>Total added files are: {filecount}</h3>
               <h3>user name  is: {userdata}</h3>
-              {/* <h3>File count is: {files[1].fileSize}</h3> */}
               <button className="upload-button" onClick={()=> {setOpenmodal(true)}}>Create +</button>
               <div className="home-file-descriptions">
                   <p style={{width: "20px", marginLeft: "25px"}}>ID</p>
@@ -169,8 +167,6 @@ function HomePage() {
                   return (<div className="file-section">
                   <input
                     type="checkbox"
-                    
-                    
                     checked={checked[key]}
                     onChange={() => {
                       handleOnChange(key, file.fileId)
@@ -181,7 +177,7 @@ function HomePage() {
                   <div className="file-section-item" style={{width: "200px", marginLeft: "15px"}}>{file.fileDescription}</div>
                   <div className="file-section-item" style={{width: "80px", marginLeft: "15px"}}>
                   
-                  {file.fileType == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' ? <p>docx/doc</p>: file.fileType }
+                  {file.fileType == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' ? <p>docx</p>: file.fileType }
                   </div>
                   <div className="file-section-item" style={{width: "60px", marginLeft: "10px"}}>{convertBytes(file.fileSize)}</div>
                   <div className="file-section-item" style={{width: "150px", marginLeft: "10px"}}>{moment.unix(file.uploadTime).format('h:mm:ss A M/D/Y')}</div>
@@ -202,7 +198,8 @@ function HomePage() {
                     setFileID(file.fileId)
                     }}><IoSync  size="30px" /></button>
                     
-                  <div  className="file-section-lvdot"></div>
+                  {file.lastChange == 0 ? <div  className="file-section-lvdot"></div>: null }
+                  {file.lastChange > 0 ? <div  className="file-section-lvdot" style={{backgroundColor: "red"}}></div>: null }
                   
                 </div>)
                 })}
@@ -221,14 +218,9 @@ function HomePage() {
                 <button disabled={deleteDisable} className="register-button" onClick={()=> {deleteFiles(deletedID)}}>Delete</button>
                 <button className="register-button" onClick={()=> {setDisplayDelete(false)}}>Cancel</button>
                 </div>
-             </div>}
-             
-              
-             
+             </div>}   
             </div>
-          </div>
-           
-         
+          </div> 
         </div>
     )
 }
