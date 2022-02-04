@@ -1,5 +1,7 @@
 import React, {useContext, useState, useEffect} from "react";
 import BlockchainContext from "../../BlockchainContext";
+//const Axios = require('axios');
+import Axios from "axios";
 
 const ipfsClient = require('ipfs-http-client')
 // const ipfs = ipfsClient.create({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' }) 
@@ -15,11 +17,14 @@ function UpdateFileModal(props) {
     const [updateDisable, setUpdateDisable] = useState(false);
     const BlockchainContextImport =  useContext(BlockchainContext)
     const {web3, contract, accounts} = BlockchainContextImport;
+    //get the file extension of the new updated file
+    const [file_ext_new, setfileExtNew] = useState(null);
 
     useEffect(() => {
         console.log('FILE DATA:', filename, filetype);
         console.log('buffer: ', buffer);
-    }, [filetype,filename, buffer]);
+        console.log('newfile ext:',file_ext_new);
+    }, [filetype,filename, buffer,file_ext_new]);
 
 
     const closeModalFunc = () =>{
@@ -42,6 +47,8 @@ function UpdateFileModal(props) {
             setfileType(file.type);
             const fileNameFilter = file.name.split(".")
             setfileName(fileNameFilter[0]);
+            var fileExtVal=file.name.split(".");
+            setfileExtNew(fileExtVal[1]);
             
         }
       }
@@ -59,15 +66,81 @@ function UpdateFileModal(props) {
             if(filetype === ''){
                 setfileType('none');
             }
-
+             //console log the file content of the new updated file
+             let contents_new = ""
+             // loop over incoming data
+            if(file_ext_new==="txt"){
+                for await(const item of ipfs.cat(uploadResult.path)){
+                    // turn string buffer to string and append to contents
+                    contents_new += new TextDecoder().decode(item)
+                }
+                console.log('New File Content:'+contents_new);
+            }
+            else if(file_ext_new==="docx"){
+                await Axios.post("http://localhost:3001/dlDocxFile",{fileURL:uploadResult.path}).then((response)=>{
+            
+                    contents_new=response.data.filecontents;
+                });
+ 
+            }
+            else if(file_ext_new==="pdf"){
+               
+                await Axios.post("http://localhost:3001/dlPDFFile",{fileURL:uploadResult.path}).then((response)=>{
+               
+                    contents_new=response.data.filecontents;
+                });
+        
+            }
             const fileData = await contract.methods.files(props.fileIndex).call();
             
             setFiledata(fileData);
             console.log('pulled fila data', fileData.fileHash, fileData.fileName);
-            
+            let contents_old = ""
+            var oldfileExt=fileData.fileType;
+        
+            console.log("Old file's extension: "+oldfileExt);
+            if(oldfileExt==="text/plain"){
+                for await(const item of ipfs.cat(fileData.fileHash)){
+                    contents_old += new TextDecoder().decode(item)
+                }
+            }
+            else if(oldfileExt==="application/vnd.openxmlformats-officedocument.wordprocessingml.document"){
+           
+                await Axios.post("http://localhost:3001/dlDocxFile",{fileURL:fileData.fileHash}).then((response)=>{
+                   
+                    contents_old=response.data.filecontents;
+                });
+            }
+            else if(oldfileExt==="application/pdf"){
+               
+                await Axios.post("http://localhost:3001/dlPDFFile",{fileURL:fileData.fileHash}).then((response)=>{
+                   
+                    contents_old=response.data.filecontents;
+                });
+           
+            }
+            contents_old=contents_old.toLowerCase();
+            contents_new=contents_new.toLowerCase();
+            contents_old=contents_old.replace(/(\r\n|\n|\r)/gm, "");
+            contents_new=contents_new.replace(/(\r\n|\n|\r)/gm, "");
+            contents_old=contents_old.split(' ').join('');
+            contents_new=contents_new.split(' ').join('');
+            console.log("processed content old: "+contents_old);
+            console.log("processed content new: "+contents_new);
+            const EditDistance=require("../../EditDistance")
+            var EditNum=EditDistance.levenshtein(contents_old,contents_new);
+            const changesNum=EditNum;
+            console.log("Num of individual changes: "+changesNum);
+            var contents_old_len=contents_old.length;
+            var contents_new_len=contents_new.length;
+            console.log("old content len: "+contents_old_len+"\nnew content len: "+contents_new_len);
+            //var largestfile_len=Math.max(contents_old_len,contents_new_len);
+            var largestfile_len=contents_old_len;
+            console.log("Largest file len: "+largestfile_len);
+            EditNum=EditNum/largestfile_len*100;
+            console.log("EditDistance or percentage of file changed is:"+EditNum );
 
-            // REPLACE 67 WITH LEVENSTEIN OUTPUT
-            await contract.methods.updateFile(uploadResult.path, uploadResult.size, filetype, filename, props.fileIndex, 67).send({ from: accounts[0] }).on('transactionHash', (hash) => {
+            await contract.methods.updateFile(uploadResult.path, uploadResult.size, filetype, filename, props.fileIndex,changesNum, largestfile_len).send({ from: accounts[0] }).on('transactionHash', (hash) => {
                 setBuffer(null);
                 setfileType(null);
                 setfileName(null);
@@ -97,7 +170,7 @@ function UpdateFileModal(props) {
                 <div className="form-input">
                 <input
                 type="file"
-                accept=".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document, .txt, application/pdf"
+                accept=".pdf,text/plain,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/pdf, .txt"
                 onChange={captureFile}
                 />
                 </div>

@@ -14,6 +14,14 @@ function TransactionPage() {
 
     const BlockchainContextImport =  useContext(BlockchainContext)
     const {web3, contract, accounts} = BlockchainContextImport;
+    
+    const editPercent = (changes,total) => {
+      if(changes==0||total==0)
+        return 0;
+      else
+        return changes/total*100;
+     
+    }
 
     useEffect(()=>{
         const load = async () => {
@@ -94,10 +102,11 @@ function TransactionPage() {
                 <div className="file-section-item" style={{width: "80px", marginLeft: "10px" }}>{transaction.transactionType}</div>
                 <div className="file-section-item" style={{width: "170px", marginLeft: "10px" }}>{moment.unix(transaction.uploadTime).format('h:mm:ss A M/D/Y')}</div>
                 <div className="file-section-item" style={{width: "40px", marginLeft: "20px" }}>{transaction.changeLevel}</div>
-                {transaction.changeLevel == 0 ? <div  className="file-section-lvdot"></div>: null }
-                {transaction.changeLevel > 0 && transaction.changeLevel < 10 ? <div  className="file-section-lvdot" style={{backgroundColor: "green"}}></div>: null }
-                {transaction.changeLevel >= 10 && transaction.changeLevel < 50 ? <div  className="file-section-lvdot" style={{backgroundColor: "#ffd105"}}></div>: null } 
-                {transaction.changeLevel >= 50 ? <div  className="file-section-lvdot" style={{backgroundColor: "red"}}></div>: null } 
+                {editPercent(transaction.changeLevel,transaction.lastSize)==0 ? <div  className="file-section-lvdot"></div>: null }
+        
+                {editPercent(transaction.changeLevel,transaction.lastSize) > 0 && editPercent(transaction.changeLevel,transaction.lastSize) < 10 ? <div  className="file-section-lvdot" style={{backgroundColor: "green"}}></div>: null }
+                {editPercent(transaction.changeLevel,transaction.lastSize) >= 10 && editPercent(transaction.changeLevel,transaction.lastSize) < 50 ? <div  className="file-section-lvdot" style={{backgroundColor: "#ffd105"}}></div>: null } 
+                {editPercent(transaction.changeLevel,transaction.lastSize) >= 50 ? <div  className="file-section-lvdot" style={{backgroundColor: "red"}}></div>: null } 
                 </div>)
                 })}
                 
