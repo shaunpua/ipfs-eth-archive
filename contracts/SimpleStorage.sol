@@ -86,6 +86,18 @@ contract SimpleStorage {
         require(bytes(_fileHash).length > 0);
         // Make sure file type exists
         require(bytes(_fileType).length > 0);
+        require(
+            keccak256(abi.encodePacked(_fileType)) ==
+                keccak256(abi.encodePacked("text/plain")) ||
+                keccak256(abi.encodePacked(_fileType)) ==
+                keccak256(
+                    abi.encodePacked(
+                        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                    )
+                ) ||
+                keccak256(abi.encodePacked(_fileType)) ==
+                keccak256(abi.encodePacked("application/pdf"))
+        );
         // Make sure file description exists
         require(bytes(_fileDescription).length > 0);
         // Make sure file fileName exists
@@ -155,6 +167,18 @@ contract SimpleStorage {
         require(bytes(_fileHash).length > 0);
         // Make sure file type exists
         require(bytes(_fileType).length > 0);
+        require(
+            keccak256(abi.encodePacked(_fileType)) ==
+                keccak256(abi.encodePacked("text/plain")) ||
+                keccak256(abi.encodePacked(_fileType)) ==
+                keccak256(
+                    abi.encodePacked(
+                        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                    )
+                ) ||
+                keccak256(abi.encodePacked(_fileType)) ==
+                keccak256(abi.encodePacked("application/pdf"))
+        );
         require(bytes(_fileName).length > 0);
         // Make sure uploader address exists
         require(msg.sender != address(0));

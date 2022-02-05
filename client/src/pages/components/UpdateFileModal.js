@@ -72,9 +72,9 @@ function UpdateFileModal(props) {
             console.log(uploadResult);
             console.log('ipfs data', uploadResult.path, uploadResult.size);
 
-            if(filetype === ''){
-                setfileType('none');
-            }
+            // if(filetype === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'){
+            //     setfileType('.docx');
+            // }
              //console log the file content of the new updated file
              let contents_new = ""
              // loop over incoming data
@@ -89,7 +89,7 @@ function UpdateFileModal(props) {
             else if(file_ext_new==="docx"){
                 await Axios.post("http://localhost:3001/dlDocxFile",{fileURL:uploadResult.path}).then((response)=>{
             
-                    contents_new=response.data.filecontents;
+                    contents_new = response.data.filecontents;
                 });
  
             }
@@ -97,7 +97,7 @@ function UpdateFileModal(props) {
                
                 await Axios.post("http://localhost:3001/dlPDFFile",{fileURL:uploadResult.path}).then((response)=>{
                
-                    contents_new=response.data.filecontents;
+                    contents_new = response.data.filecontents;
                 });
         
             }
@@ -119,14 +119,14 @@ function UpdateFileModal(props) {
            
                 await Axios.post("http://localhost:3001/dlDocxFile",{fileURL:fileData.fileHash}).then((response)=>{
                    
-                    contents_old=response.data.filecontents;
+                    contents_old = response.data.filecontents;
                 });
             }
             else if(oldfileExt==="application/pdf"){
                
                 await Axios.post("http://localhost:3001/dlPDFFile",{fileURL:fileData.fileHash}).then((response)=>{
                    
-                    contents_old=response.data.filecontents;
+                    contents_old = response.data.filecontents;
                 });
            
             }
@@ -188,7 +188,7 @@ function UpdateFileModal(props) {
                 <div className="form-input">
                 <input
                 type="file"
-                accept=".pdf,text/plain,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/pdf, .txt"
+                accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, .txt, application/pdf"
                 onChange={captureFile}
                 />
                 </div>

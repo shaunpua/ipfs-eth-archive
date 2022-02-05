@@ -36,9 +36,11 @@ function AddFileModal( {closeModal}) {
             console.log(uploadResult);
             console.log('ipfs data', uploadResult.path, uploadResult.size);
 
-            if(filetype === ''){
-                setfileType('none');
-            }
+            // if(filetype === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'){
+            //     setfileType('.docx');
+            // }
+
+            console.log('TEST FILETYPE:',filetype)
 
             await contract.methods.uploadFile(uploadResult.path, uploadResult.size, filetype, filename, description).send({ from: accounts[0] }).on('transactionHash', (hash) => {
                setBuffer(null);
@@ -96,7 +98,7 @@ function AddFileModal( {closeModal}) {
                     <div className="form-input">
                     <input
                     type="file"
-                    accept=".docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document, .txt, application/pdf"
+                    accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, .txt, application/pdf"
                     onChange={captureFile}
                     />
                     </div>

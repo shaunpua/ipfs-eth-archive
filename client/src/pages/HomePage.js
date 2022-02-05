@@ -134,6 +134,15 @@ function HomePage() {
         console.log(err)
       }  
     }
+
+    const editPercent = (changes,total) => {
+      if(changes==0||total==0)
+        return 0;
+      else
+        return changes/total*100;
+     
+    }
+
     // if (typeof contract === 'undefined') {
     //   return <div>Loading Web3, accounts, and contract...</div>;
     // }
@@ -197,9 +206,12 @@ function HomePage() {
                     setUpdatemodal(true)
                     setFileID(file.fileId)
                     }}><IoSync  size="30px" /></button>
-                    
-                  {file.lastChange == 0 ? <div  className="file-section-lvdot"></div>: null }
-                  {file.lastChange > 0 ? <div  className="file-section-lvdot" style={{backgroundColor: "red"}}></div>: null }
+                  {editPercent(file.lastChange,file.lastSize)==0 ? <div  className="file-section-lvdot"></div>: null }  
+                  {editPercent(file.lastChange,file.lastSize) > 0 && editPercent(file.lastChange,file.lastSize) < 10 ? <div  className="file-section-lvdot" style={{backgroundColor: "green"}}></div>: null }
+                  {editPercent(file.lastChange,file.lastSize) >= 10 && editPercent(file.lastChange,file.lastSize) < 50 ? <div  className="file-section-lvdot" style={{backgroundColor: "#ffd105"}}></div>: null } 
+                  {editPercent(file.lastChange,file.lastSize) >= 50 ? <div  className="file-section-lvdot" style={{backgroundColor: "red"}}></div>: null } 
+                  {/* {file.lastChange == 0 ? <div  className="file-section-lvdot"></div>: null }
+                  {file.lastChange > 0 ? <div  className="file-section-lvdot" style={{backgroundColor: "red"}}></div>: null } */}
                   
                 </div>)
                 })}
