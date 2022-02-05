@@ -2,6 +2,15 @@ const express=require("express");
 const app=express();
 const cors = require("cors");
 
+function cleanString(input) {
+    var output = "";
+    for (var i=0; i<input.length; i++) {
+        if (input.charCodeAt(i) <= 127) {
+            output += input.charAt(i);
+        }
+    }
+    return output;
+}
 //DOCX FILE DL
 const fs = require ("fs")
 const { types } = require('util')
@@ -51,6 +60,7 @@ app.post("/dlDocxFile",async(req,res)=>{
     }).catch(errMsg => {
         return error.message;
     });
+    filecontents=cleanString(filecontents);
     console.log("to be sent data: "+filecontents)
     fs.unlink(filelocation, function(){
         console.log("File was deleted") // Callback
@@ -89,6 +99,7 @@ app.post("/dlPDFFile",async(req,res)=>{
         }).catch(errMsg => {
         return error.message;
     });
+    filecontents=cleanString(filecontents);
     console.log("to be sent data: "+filecontents)
     fs.unlink(filelocation, function(){
         console.log("File was deleted") // Callback

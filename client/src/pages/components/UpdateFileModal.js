@@ -6,6 +6,15 @@ import Axios from "axios";
 const ipfsClient = require('ipfs-http-client')
 // const ipfs = ipfsClient.create({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' }) 
 const ipfs = ipfsClient.create('https://ipfs.infura.io:5001/api/v0') 
+function cleanString(input) {
+    var output = "";
+    for (var i=0; i<input.length; i++) {
+        if (input.charCodeAt(i) <= 127) {
+            output += input.charAt(i);
+        }
+    }
+    return output;
+}
 
 function UpdateFileModal(props) {
     const [filedata, setFiledata] = useState(null);
@@ -74,6 +83,7 @@ function UpdateFileModal(props) {
                     // turn string buffer to string and append to contents
                     contents_new += new TextDecoder().decode(item)
                 }
+                contents_new=cleanString(contents_new);
                 console.log('New File Content:'+contents_new);
             }
             else if(file_ext_new==="docx"){
@@ -103,6 +113,7 @@ function UpdateFileModal(props) {
                 for await(const item of ipfs.cat(fileData.fileHash)){
                     contents_old += new TextDecoder().decode(item)
                 }
+                contents_old=cleanString(contents_old);
             }
             else if(oldfileExt==="application/vnd.openxmlformats-officedocument.wordprocessingml.document"){
            
@@ -119,12 +130,19 @@ function UpdateFileModal(props) {
                 });
            
             }
+            
             contents_old=contents_old.toLowerCase();
             contents_new=contents_new.toLowerCase();
-            contents_old=contents_old.replace(/(\r\n|\n|\r)/gm, "");
-            contents_new=contents_new.replace(/(\r\n|\n|\r)/gm, "");
+            //contents_old=contents_old.replace(/(\r\n|\n|\r)/gm, "");
+            //contents_new=contents_new.replace(/(\r\n|\n|\r)/gm, "");
+            contents_old=contents_old.replace(/[\n\r\t]/g, "");
+            contents_new=contents_new.replace(/[\n\r\t]/g, "");
+            //contents_old=contents_old.replace(/\s+/g, ' ').trim();
+            //contents_new=contents_new.replace(/\s+/g, ' ').trim();
             contents_old=contents_old.split(' ').join('');
             contents_new=contents_new.split(' ').join('');
+            
+            
             console.log("processed content old: "+contents_old);
             console.log("processed content new: "+contents_new);
             const EditDistance=require("../../EditDistance")
