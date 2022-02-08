@@ -16,6 +16,8 @@ function TransactionPage() {
     const {web3, contract, accounts} = BlockchainContextImport;
     
     const editPercent = (changes,total) => {
+      if  (changes > 0 && total == 0)
+        return 100;
       if(changes==0||total==0)
         return 0;
       else
