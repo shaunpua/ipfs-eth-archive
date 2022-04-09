@@ -25,6 +25,18 @@ function TransactionPage() {
      
     }
 
+    const limitCharacters = (strtext) => {
+      if (strtext.length > 5){
+        return strtext.substring(0,5) + '...';
+      } else {
+        return strtext;
+      }
+    }
+    const concatSlash = (arg1, arg2) => {
+      
+      return arg1 + '/' + arg2;
+    }
+
     useEffect(()=>{
         const load = async () => {
           
@@ -103,12 +115,12 @@ function TransactionPage() {
                           </a></div>
                 <div className="file-section-item" style={{width: "80px", marginLeft: "10px" }}>{transaction.transactionType}</div>
                 <div className="file-section-item" style={{width: "170px", marginLeft: "10px" }}>{moment.unix(transaction.uploadTime).format('h:mm:ss A M/D/Y')}</div>
-                <div className="file-section-item" style={{width: "40px", marginLeft: "10px" }}>{transaction.changeLevel}</div>
-                {editPercent(transaction.changeLevel,transaction.lastSize)==0 ? <div  className="file-section-lv">{transaction.changeLevel}/{transaction.lastSize}</div>: null }
+                <div className="file-section-item" style={{width: "40px", marginLeft: "10px" }}>{limitCharacters(transaction.changeLevel)}</div>
+                {editPercent(transaction.changeLevel,transaction.lastSize)==0 ? <div  className="file-section-lv">{limitCharacters(concatSlash(transaction.changeLevel,transaction.lastSize))}</div>: null }
         
-                {editPercent(transaction.changeLevel,transaction.lastSize) > 0 && editPercent(transaction.changeLevel,transaction.lastSize) < 10 ? <div  className="file-section-lv" style={{backgroundColor: "green"}}>{transaction.changeLevel}/{transaction.lastSize}</div>: null }
-                {editPercent(transaction.changeLevel,transaction.lastSize) >= 10 && editPercent(transaction.changeLevel,transaction.lastSize) < 50 ? <div  className="file-section-lv" style={{backgroundColor: "#ffd105"}}>{transaction.changeLevel}/{transaction.lastSize}</div>: null } 
-                {editPercent(transaction.changeLevel,transaction.lastSize) >= 50 ? <div  className="file-section-lv" style={{backgroundColor: "red"}}>{transaction.changeLevel}/{transaction.lastSize}</div>: null } 
+                {editPercent(transaction.changeLevel,transaction.lastSize) > 0 && editPercent(transaction.changeLevel,transaction.lastSize) < 10 ? <div  className="file-section-lv" style={{backgroundColor: "green"}}>{limitCharacters(concatSlash(transaction.changeLevel,transaction.lastSize))}</div>: null }
+                {editPercent(transaction.changeLevel,transaction.lastSize) >= 10 && editPercent(transaction.changeLevel,transaction.lastSize) < 50 ? <div  className="file-section-lv" style={{backgroundColor: "#ffd105"}}>{limitCharacters(concatSlash(transaction.changeLevel,transaction.lastSize))}</div>: null } 
+                {editPercent(transaction.changeLevel,transaction.lastSize) >= 50 ? <div  className="file-section-lv" style={{backgroundColor: "red"}}>{limitCharacters(concatSlash(transaction.changeLevel,transaction.lastSize))}</div>: null } 
                 </div>)
                 })}
                 

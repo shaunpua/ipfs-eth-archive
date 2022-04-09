@@ -20,10 +20,14 @@ function UpdateFileModal(props) {
     const [filedata, setFiledata] = useState(null);
     const [filetype, setfileType] = useState(null);
     const [filename, setfileName] = useState(null);
+    const [fullfilename, setFullfilename] = useState(null)
     const [buffer, setBuffer] = useState(null);
 
     //button disable states
     const [updateDisable, setUpdateDisable] = useState(false);
+    const [selectDisable, setSelectDisable] = useState(true);
+
+
     const BlockchainContextImport =  useContext(BlockchainContext)
     const {web3, contract, accounts} = BlockchainContextImport;
     //get the file extension of the new updated file
@@ -55,9 +59,11 @@ function UpdateFileModal(props) {
             setBuffer(Buffer(reader.result));
             setfileType(file.type);
             const fileNameFilter = file.name.split(".")
+            setFullfilename(file.name)
             setfileName(fileNameFilter[0]);
             var fileExtVal=file.name.split(".");
             setfileExtNew(fileExtVal[1]);
+            setSelectDisable(false);
             
         }
       }
@@ -186,11 +192,12 @@ function UpdateFileModal(props) {
             <form  className="modal-form" onSubmit={updateFile}>
                 
                 <div className="form-input">
-                <input
+                    {selectDisable && <input
                 type="file"
                 accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, .txt, application/pdf"
                 onChange={captureFile}
-                />
+                />}
+                {fullfilename}
                 </div>
                 
                 <button  disabled={updateDisable} className="register-button">Upload File</button>

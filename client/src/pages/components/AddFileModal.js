@@ -10,10 +10,12 @@ function AddFileModal( {closeModal}) {
     const [description, setDescription] = useState('');
     const [filetype, setfileType] = useState(null);
     const [filename, setfileName] = useState(null);
+    const [fullfilename, setFullfilename] = useState(null)
     const [buffer, setBuffer] = useState(null);
 
     //button disable states
     const [uploadDisable, setUploadDisable] = useState(false);
+    const [selectDisable, setSelectDisable] = useState(true);
 
 
     const BlockchainContextImport =  useContext(BlockchainContext)
@@ -71,7 +73,9 @@ function AddFileModal( {closeModal}) {
             setBuffer(Buffer(reader.result));
             setfileType(file.type);
             const fileNameFilter = file.name.split(".")
+            setFullfilename(file.name)
             setfileName(fileNameFilter[0]);
+            setSelectDisable(false);
 
         }
       }
@@ -96,11 +100,12 @@ function AddFileModal( {closeModal}) {
                     />  
                     </div>
                     <div className="form-input">
-                    <input
+                    { selectDisable && <input
                     type="file"
                     accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, .txt, application/pdf"
                     onChange={captureFile}
-                    />
+                    />}
+                    {fullfilename}
                     </div>
                     
                     <button  disabled={uploadDisable} className="register-button">Upload File</button>
