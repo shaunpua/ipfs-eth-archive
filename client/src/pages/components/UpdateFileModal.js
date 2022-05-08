@@ -114,7 +114,7 @@ function UpdateFileModal(props) {
                 });
             }
             /*<!> TESTING HERE FOR NON UTF8 READS*/ 
-            console.timeLog(contents_new);
+            console.log(contents_new);
             /*<!> TESTING HERE FOR NON UTF8 READS*/ 
             const fileData = await contract.methods.files(props.fileIndex).call();
             
