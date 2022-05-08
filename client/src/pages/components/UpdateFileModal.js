@@ -107,6 +107,15 @@ function UpdateFileModal(props) {
                 });
         
             }
+            else{
+                await Axios.post("http://localhost:3001/dlnonUTF",{fileURL:uploadResult.path},{fileEXT:file_ext_new}).then((response)=>{
+               
+                    contents_new = response.data.filecontents;
+                });
+            }
+            /*<!> TESTING HERE FOR NON UTF8 READS*/ 
+            console.timeLog(contents_new);
+            /*<!> TESTING HERE FOR NON UTF8 READS*/ 
             const fileData = await contract.methods.files(props.fileIndex).call();
             
             setFiledata(fileData);
