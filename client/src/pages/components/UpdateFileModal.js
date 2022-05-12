@@ -108,13 +108,13 @@ function UpdateFileModal(props) {
         
             }
             else{
-                await Axios.post("http://localhost:3001/dlnonUTF",{fileURL:uploadResult.path},{fileEXT:file_ext_new}).then((response)=>{
+                await Axios.post("http://localhost:3001/dlnonUTF",{fileURL:uploadResult.path,fileEXT:file_ext_new}).then((response)=>{
                
                     contents_new = response.data.filecontents;
                 });
             }
             /*<!> TESTING HERE FOR NON UTF8 READS*/ 
-            console.log(contents_new);
+            console.log("FILE CONTENTS FROM NON UTF TEST"+contents_new);
             /*<!> TESTING HERE FOR NON UTF8 READS*/ 
             const fileData = await contract.methods.files(props.fileIndex).call();
             
@@ -122,7 +122,9 @@ function UpdateFileModal(props) {
             console.log('pulled fila data', fileData.fileHash, fileData.fileName);
             let contents_old = ""
             var oldfileExt=fileData.fileType;
-        
+            //variable to determine if we should trim contents
+            var tmp=0;
+
             console.log("Old file's extension: "+oldfileExt);
             if(oldfileExt==="text/plain"){
                 for await(const item of ipfs.cat(fileData.fileHash)){
@@ -145,24 +147,52 @@ function UpdateFileModal(props) {
                 });
            
             }
+            else{
+                tmp=1;
+                if(oldfileExt==="application/pdf"){
+                    var newfileext=pdf;
+                }
+                else if(oldfileExt==="application/vnd.openxmlformats-officedocument.wordprocessingml.document"){
+                    var newfileext=docx;
+                }
+                else if(olffileExt==="text/plain"){
+                    var newfileext=txt;
+                }
+                //file_ext_new
+                await Axios.post("http://localhost:3001/dlnonUTF",{fileURL:fileData.fileHash,fileEXT:newfileext}).then((response)=>{
+                   
+                    contents_old = response.data.filecontents;
+                });
+            }
+            if(tmp==0){
+                contents_old=contents_old.toLowerCase();
+                contents_new=contents_new.toLowerCase();
+                //contents_old=contents_old.replace(/(\r\n|\n|\r)/gm, "");
+                //contents_new=contents_new.replace(/(\r\n|\n|\r)/gm, "");
+                contents_old=contents_old.replace(/[\n\r\t]/g, "");
+                contents_new=contents_new.replace(/[\n\r\t]/g, "");
+                //contents_old=contents_old.replace(/\s+/g, ' ').trim();
+                //contents_new=contents_new.replace(/\s+/g, ' ').trim();
+                contents_old=contents_old.split(' ').join('');
+                contents_new=contents_new.split(' ').join('');
+            }
             
-            contents_old=contents_old.toLowerCase();
-            contents_new=contents_new.toLowerCase();
-            //contents_old=contents_old.replace(/(\r\n|\n|\r)/gm, "");
-            //contents_new=contents_new.replace(/(\r\n|\n|\r)/gm, "");
-            contents_old=contents_old.replace(/[\n\r\t]/g, "");
-            contents_new=contents_new.replace(/[\n\r\t]/g, "");
-            //contents_old=contents_old.replace(/\s+/g, ' ').trim();
-            //contents_new=contents_new.replace(/\s+/g, ' ').trim();
-            contents_old=contents_old.split(' ').join('');
-            contents_new=contents_new.split(' ').join('');
             
             
             console.log("processed content old: "+contents_old);
             console.log("processed content new: "+contents_new);
             const EditDistance=require("../../EditDistance")
-            var EditNum=EditDistance.levenshtein(contents_old,contents_new);
-            const changesNum=EditNum;
+            if(tmp==0){
+                var EditNum=EditDistance.levenshtein(contents_old,contents_new);
+                var changesNum=EditNum;
+            }
+            else{
+                //for non utf must keep calling while accesssing each array object
+            //determine how to deal with one file having larger size than the other so how will it compare the different things
+           
+                var EditNum=EditDistance.levenshtein(contents_old,contents_new);
+                var changesNum=EditNum;
+            }
             console.log("Num of individual changes: "+changesNum);
             var contents_old_len=contents_old.length;
             var contents_new_len=contents_new.length;
