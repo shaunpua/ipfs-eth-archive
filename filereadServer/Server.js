@@ -150,7 +150,14 @@ app.post("/dlnonUTF",async(req,res)=>{
     .then(() => {
         console.log('Download Completed');
     })
-    var filelocation="./files/"+String(url)+String(ext);
+    var filelocation;
+    if(String(ext)=="txt")
+    {
+        filelocation="./files/"+String(url);
+    }
+    else{
+        filelocation="./files/"+String(url)+"."+String(ext);
+    }
     console.log("dl file path: "+filelocation);
     var dataBuffer = fs.readFileSync(filelocation);
     
