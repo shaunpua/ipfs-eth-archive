@@ -189,7 +189,19 @@ function UpdateFileModal(props) {
             else{
                 //for non utf must keep calling while accesssing each array object
             //determine how to deal with one file having larger size than the other so how will it compare the different things
-           
+                //(0->contensnew_chunk_len-1)
+                // var EditNum
+                // if(contents_old.length>contents_new.length ){
+                //     for(let i=0;i<contents_new.length;i++){
+                //         EditNum=EditNum+EditDistance.levenshtein(contents_old[i].raw,contents_new[i].raw);
+                //     }
+                // }
+                // else if(contents_old.length<contents_old.length){
+
+                // }
+                // else if(contents_old.length==contents_old.length){
+                //     //search deeper for size of the last chunk
+                // }
                 var EditNum=EditDistance.levenshtein(contents_old,contents_new);
                 var changesNum=EditNum;
             }
