@@ -84,35 +84,39 @@ function UpdateFileModal(props) {
              //console log the file content of the new updated file
              let contents_new = ""
              // loop over incoming data
-            if(file_ext_new==="txt"){
-                for await(const item of ipfs.cat(uploadResult.path)){
-                    // turn string buffer to string and append to contents
-                    contents_new += new TextDecoder().decode(item)
-                }
-                contents_new=cleanString(contents_new);
-                console.log('New File Content:'+contents_new);
-            }
-            else if(file_ext_new==="docx"){
-                await Axios.post("http://localhost:3001/dlDocxFile",{fileURL:uploadResult.path}).then((response)=>{
+
+             //<!>FOR TESTING UTF START<!>
+
+            // if(file_ext_new==="txt"){
+            //     for await(const item of ipfs.cat(uploadResult.path)){
+            //         // turn string buffer to string and append to contents
+            //         contents_new += new TextDecoder().decode(item)
+            //     }
+            //     contents_new=cleanString(contents_new);
+            //     console.log('New File Content:'+contents_new);
+            // }
+            // else if(file_ext_new==="docx"){
+            //     await Axios.post("http://localhost:3001/dlDocxFile",{fileURL:uploadResult.path}).then((response)=>{
             
-                    contents_new = response.data.filecontents;
-                });
+            //         contents_new = response.data.filecontents;
+            //     });
  
-            }
-            else if(file_ext_new==="pdf"){
+            // }
+            // else if(file_ext_new==="pdf"){
                
-                await Axios.post("http://localhost:3001/dlPDFFile",{fileURL:uploadResult.path}).then((response)=>{
+            //     await Axios.post("http://localhost:3001/dlPDFFile",{fileURL:uploadResult.path}).then((response)=>{
                
-                    contents_new = response.data.filecontents;
-                });
+            //         contents_new = response.data.filecontents;
+            //     });
         
-            }
-            else{
+            // }
+            // else{
                 await Axios.post("http://localhost:3001/dlnonUTF",{fileURL:uploadResult.path,fileEXT:file_ext_new}).then((response)=>{
                
                     contents_new = response.data.filecontents;
                 });
-            }
+                //<!>FOR TESTING UTF END<!>
+            // }
             /*<!> TESTING HERE FOR NON UTF8 READS*/ 
             console.log("FILE CONTENTS FROM NON UTF TEST"+contents_new);
             /*<!> TESTING HERE FOR NON UTF8 READS*/ 
@@ -126,44 +130,48 @@ function UpdateFileModal(props) {
             var tmp=0;
 
             console.log("Old file's extension: "+oldfileExt);
-            if(oldfileExt==="text/plain"){
-                for await(const item of ipfs.cat(fileData.fileHash)){
-                    contents_old += new TextDecoder().decode(item)
-                }
-                contents_old=cleanString(contents_old);
-            }
-            else if(oldfileExt==="application/vnd.openxmlformats-officedocument.wordprocessingml.document"){
+
+            //<!>FOR TESTING UTF START<!>
+
+            // if(oldfileExt==="text/plain"){
+            //     for await(const item of ipfs.cat(fileData.fileHash)){
+            //         contents_old += new TextDecoder().decode(item)
+            //     }
+            //     contents_old=cleanString(contents_old);
+            // }
+            // else if(oldfileExt==="application/vnd.openxmlformats-officedocument.wordprocessingml.document"){
            
-                await Axios.post("http://localhost:3001/dlDocxFile",{fileURL:fileData.fileHash}).then((response)=>{
+            //     await Axios.post("http://localhost:3001/dlDocxFile",{fileURL:fileData.fileHash}).then((response)=>{
                    
-                    contents_old = response.data.filecontents;
-                });
-            }
-            else if(oldfileExt==="application/pdf"){
+            //         contents_old = response.data.filecontents;
+            //     });
+            // }
+            // else if(oldfileExt==="application/pdf"){
                
-                await Axios.post("http://localhost:3001/dlPDFFile",{fileURL:fileData.fileHash}).then((response)=>{
+            //     await Axios.post("http://localhost:3001/dlPDFFile",{fileURL:fileData.fileHash}).then((response)=>{
                    
-                    contents_old = response.data.filecontents;
-                });
+            //         contents_old = response.data.filecontents;
+            //     });
            
-            }
-            else{
+            // }
+            // else{
                 tmp=1;
                 if(oldfileExt==="application/pdf"){
-                    var newfileext=pdf;
+                    var newfileext="pdf";
                 }
                 else if(oldfileExt==="application/vnd.openxmlformats-officedocument.wordprocessingml.document"){
-                    var newfileext=docx;
+                    var newfileext="docx";
                 }
-                else if(olffileExt==="text/plain"){
-                    var newfileext=txt;
+                else if(oldfileExt==="text/plain"){
+                    var newfileext="txt";
                 }
                 //file_ext_new
                 await Axios.post("http://localhost:3001/dlnonUTF",{fileURL:fileData.fileHash,fileEXT:newfileext}).then((response)=>{
                    
                     contents_old = response.data.filecontents;
                 });
-            }
+            // }
+            //<!>FOR TESTING UTF END<!>
             if(tmp==0){
                 contents_old=contents_old.toLowerCase();
                 contents_new=contents_new.toLowerCase();
@@ -187,22 +195,37 @@ function UpdateFileModal(props) {
                 var changesNum=EditNum;
             }
             else{
-                //for non utf must keep calling while accesssing each array object
-            //determine how to deal with one file having larger size than the other so how will it compare the different things
-                //(0->contensnew_chunk_len-1)
-                // var EditNum
-                // if(contents_old.length>contents_new.length ){
-                //     for(let i=0;i<contents_new.length;i++){
-                //         EditNum=EditNum+EditDistance.levenshtein(contents_old[i].raw,contents_new[i].raw);
-                //     }
-                // }
-                // else if(contents_old.length<contents_old.length){
+                var EditNum
+                if(contents_old.length>contents_new.length ){
+                     for(let i=0;i<contents_old.length;i++){
+                         if(i>=contents_new.length){
+                            EditNum=EditNum+EditDistance.levenshtein(contents_old[i].raw,"");
+                         }
+                         else{
+                            EditNum=EditNum+EditDistance.levenshtein(contents_old[i].raw,contents_new[i].raw);
+                         }
+                         
+                     }
 
-                // }
-                // else if(contents_old.length==contents_old.length){
-                //     //search deeper for size of the last chunk
-                // }
-                var EditNum=EditDistance.levenshtein(contents_old,contents_new);
+                 }
+                 else if(contents_old.length<contents_new.length){
+                    for(let i=0;i<contents_new.length;i++){
+                        if(i>=contents_old.length){
+                           EditNum=EditNum+EditDistance.levenshtein("",contents_new[i].raw);
+                        }
+                        else{
+                           EditNum=EditNum+EditDistance.levenshtein(contents_old[i].raw,contents_new[i].raw);
+                        }
+                        
+                    }
+                 }
+                 else if(contents_old.length==contents_new.length){
+                     for(let i=0;i<contents_old.length;i++){
+                        
+                           EditNum=EditNum+EditDistance.levenshtein(contents_old[i].raw,contents_new[i].raw);
+                    }
+                 }
+                
                 var changesNum=EditNum;
             }
             console.log("Num of individual changes: "+changesNum);
@@ -210,7 +233,16 @@ function UpdateFileModal(props) {
             var contents_new_len=contents_new.length;
             console.log("old content len: "+contents_old_len+"\nnew content len: "+contents_new_len);
             //var largestfile_len=Math.max(contents_old_len,contents_new_len);
-            var largestfile_len=contents_old_len;
+            if(tmp==0){
+                var largestfile_len=contents_old_len;
+            }
+            else{
+                var largestfile_len;
+                for(let i=0;i<contents_old.length;i++){
+                    largestfile_len=largestfile_len+contents_old[i].length;
+                }
+            }
+            
             console.log("Largest file len: "+largestfile_len);
             EditNum=EditNum/largestfile_len*100;
             console.log("EditDistance or percentage of file changed is:"+EditNum );
