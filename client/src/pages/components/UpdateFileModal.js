@@ -195,14 +195,14 @@ function UpdateFileModal(props) {
                 var changesNum=EditNum;
             }
             else{
-                var EditNum
+                var EditNum=0;
                 if(contents_old.length>contents_new.length ){
                      for(let i=0;i<contents_old.length;i++){
                          if(i>=contents_new.length){
-                            EditNum=EditNum+EditDistance.levenshtein(contents_old[i].raw,"");
+                            EditNum=EditNum+EditDistance.levenshtein(String(contents_old[i].raw),"");
                          }
                          else{
-                            EditNum=EditNum+EditDistance.levenshtein(contents_old[i].raw,contents_new[i].raw);
+                            EditNum=EditNum+EditDistance.levenshtein(String(contents_old[i].raw),String(contents_new[i].raw));
                          }
                          
                      }
@@ -211,10 +211,10 @@ function UpdateFileModal(props) {
                  else if(contents_old.length<contents_new.length){
                     for(let i=0;i<contents_new.length;i++){
                         if(i>=contents_old.length){
-                           EditNum=EditNum+EditDistance.levenshtein("",contents_new[i].raw);
+                           EditNum=EditNum+EditDistance.levenshtein("",String(contents_new[i].raw));
                         }
                         else{
-                           EditNum=EditNum+EditDistance.levenshtein(contents_old[i].raw,contents_new[i].raw);
+                           EditNum=EditNum+EditDistance.levenshtein(String(contents_old[i].raw),String(contents_new[i].raw));
                         }
                         
                     }
@@ -222,10 +222,9 @@ function UpdateFileModal(props) {
                  else if(contents_old.length==contents_new.length){
                      for(let i=0;i<contents_old.length;i++){
                         
-                           EditNum=EditNum+EditDistance.levenshtein(contents_old[i].raw,contents_new[i].raw);
+                           EditNum=EditNum+EditDistance.levenshtein(String(contents_old[i].raw),String(contents_new[i].raw));
                     }
                  }
-                
                 var changesNum=EditNum;
             }
             console.log("Num of individual changes: "+changesNum);
@@ -237,9 +236,9 @@ function UpdateFileModal(props) {
                 var largestfile_len=contents_old_len;
             }
             else{
-                var largestfile_len;
+                var largestfile_len=0;
                 for(let i=0;i<contents_old.length;i++){
-                    largestfile_len=largestfile_len+contents_old[i].length;
+                    largestfile_len=largestfile_len+contents_old[i].raw.length;
                 }
             }
             
