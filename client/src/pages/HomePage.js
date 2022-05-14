@@ -7,7 +7,7 @@ import AddFileModal from "./components/AddFileModal";
 import UpdateFileModal from "./components/UpdateFileModal";
 import { convertBytes } from '../extraFunctions';
 import moment from 'moment'
-import { IoSync} from "react-icons/io5";
+import { IoSync, IoTrash} from "react-icons/io5";
 
 
 function HomePage() {
@@ -15,6 +15,7 @@ function HomePage() {
     const [fileNum, setFileNum] = useState(null);
     const [files, setFiles] = useState([]);
     const [checked, setChecked] = useState([]);
+    // deletedID not used 
     const [deletedID, setDeletedID] = useState([]);
     const [userdata, setUserdata] = useState(null);
     const [fileID, setFileID] = useState(null);
@@ -22,6 +23,8 @@ function HomePage() {
     const [updatemodal, setUpdatemodal] = useState(false);
     const [displayDelete, setDisplayDelete] = useState(false);
     const [loggedIn, setLoggedIn] = useState(false);
+
+    const [deletedFileID, setDeletedFileID] = useState(null);
   // const [contractname, setContractname] = useState('');
 
     //button disabler states
@@ -124,7 +127,7 @@ function HomePage() {
       console.log(deletedID);
       setDeleteDisable(true);
       try {
-        await contract.methods.deleteFile(deletedID).send({ from: accounts[0] });
+        await contract.methods.deleteFile(deletedFileID).send({ from: accounts[0] });
         setDeleteDisable(false);
         window.location.reload(false);
 
@@ -176,13 +179,19 @@ function HomePage() {
               <div className="home-files-container">
                 {files.map((file, key) => {
                   return (<div className="file-section">
-                  <input
+                    <button className="update-button" onClick={()=> {
+                    // setDeletedID(deletedID =>[...deletedID, file.fileId]);
+                    setDeletedFileID(file.fileId);
+                    setDisplayDelete(true)
+                      
+                    }}><IoTrash size="30px" /></button>
+                  {/* <input
                     type="checkbox"
                     checked={checked[key]}
                     onChange={() => {
                       handleOnChange(key, file.fileId)
                     }}
-                  />
+                  /> */}
                   <div className="file-section-item" style={{width: "20px", marginLeft: "10px" }} >{file.fileId}</div>
                   <div className="file-section-item" style={{width: "120px", marginLeft: "5px"}}>{file.fileName}</div>
                   <div className="file-section-item" style={{width: "200px", marginLeft: "15px"}}>{file.fileDescription}</div>
@@ -229,7 +238,7 @@ function HomePage() {
                     <h2>Are you sure?</h2>
                 </div>
                 
-                <button disabled={deleteDisable} className="register-button" onClick={()=> {deleteFiles(deletedID)}}>Delete</button>
+                <button disabled={deleteDisable} className="register-button" onClick={()=> {deleteFiles(deletedFileID)}}>Delete</button>
                 <button className="register-button" onClick={()=> {setDisplayDelete(false)}}>Cancel</button>
                 </div>
              </div>}   

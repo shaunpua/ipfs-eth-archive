@@ -1,5 +1,6 @@
 import React, {useContext, useState, useEffect} from "react";
 import BlockchainContext from "../../BlockchainContext";
+import { IoAddCircle, IoRemoveCircleSharp } from "react-icons/io5";
 
 const ipfsClient = require('ipfs-http-client')
 // const ipfs = ipfsClient.create({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' }) 
@@ -10,8 +11,11 @@ function AddFileModal( {closeModal}) {
     const [description, setDescription] = useState('');
     const [filetype, setfileType] = useState(null);
     const [filename, setfileName] = useState(null);
+    const [filePrivacy, setFilePrivacy] = useState(false);
     const [fullfilename, setFullfilename] = useState(null)
     const [buffer, setBuffer] = useState(null);
+    const [selectedUser, setSelectedUser] = useState('');
+    const [allowedUsers, setAllowedUsers] = useState([]);
 
     //button disable states
     const [uploadDisable, setUploadDisable] = useState(false);
@@ -33,6 +37,7 @@ function AddFileModal( {closeModal}) {
         
         e.preventDefault();
         setUploadDisable(true);
+        
         try {
             const uploadResult = await ipfs.add(Buffer.from(buffer));
             console.log(uploadResult);
@@ -44,7 +49,7 @@ function AddFileModal( {closeModal}) {
 
             console.log('TEST FILETYPE:',filetype)
 
-            await contract.methods.uploadFile(uploadResult.path, uploadResult.size, filetype, filename, description).send({ from: accounts[0] }).on('transactionHash', (hash) => {
+            await contract.methods.uploadFile(uploadResult.path, uploadResult.size, filetype, filename, description, filePrivacy, allowedUsers).send({ from: accounts[0] }).on('transactionHash', (hash) => {
                setBuffer(null);
                setfileType(null);
                setfileName(null);
@@ -60,6 +65,30 @@ function AddFileModal( {closeModal}) {
         }
         
     }
+
+    const addAllowedUser = (e) => {
+        e.preventDefault()
+        if (selectedUser != '' || selectedUser != 'blank') {
+            setAllowedUsers(allowedUsers => [...allowedUsers, selectedUser]);
+            setSelectedUser('blank');
+
+        }
+                             
+
+    }
+
+    const removeAllowedUser = (e, user) => {
+        e.preventDefault()
+        const updatedAllowedUsers = allowedUsers.filter((id) => {
+            return id != user;
+          })
+  
+        setAllowedUsers(updatedAllowedUsers);
+                             
+
+    }
+
+    
 
     const captureFile = event => {
         event.preventDefault()
@@ -107,6 +136,44 @@ function AddFileModal( {closeModal}) {
                     />}
                     {fullfilename}
                     </div>
+                    <p>File Privacy</p>
+                    <input
+                    type="checkbox"
+                    defaultChecked={filePrivacy}
+                    onChange={() => {
+                      setFilePrivacy(!filePrivacy)
+                    }}
+                    />
+                    { filePrivacy && 
+                    <div className="private-details"> 
+                        <p>Shared User Address</p>
+                        <input 
+                        type="text" 
+                        required 
+                        value={selectedUser}
+                        onChange={(e) => setSelectedUser(e.target.value)}
+                        className="auth-input"
+                        placeholder="Enter User Address"
+                        />  
+                         <button className="update-button" onClick={(e)=> {
+                             addAllowedUser(e);
+                             
+                         }}><IoAddCircle size="30px" /></button>
+                        
+                    </div>}
+                    {filePrivacy && allowedUsers.map((user, key) => {
+                        return (<div>
+                            <div className="allowed-users">
+                            <p>{user}</p>
+                            <button className="update-button" onClick={(e)=> {
+                             removeAllowedUser(e, user);
+                             
+                         }}><IoRemoveCircleSharp size="30px" /></button>
+                            </div>
+                            
+                        </div>)
+                    }) }
+                    
                     
                     <button  disabled={uploadDisable} className="register-button">Upload File</button>
                 </form>

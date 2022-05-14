@@ -412,6 +412,14 @@ button:hover {
   background-color: #5c6ae4;
 }
 
+.private-details {
+  display: flex;
+}
+
+.allowed-users {
+  display: flex;
+}
+
 .update-button {
   width: 30px;
   padding: 4px 4px;

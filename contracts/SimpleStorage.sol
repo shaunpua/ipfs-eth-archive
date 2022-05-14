@@ -22,6 +22,8 @@ contract SimpleStorage {
         address uploader;
         uint256 lastChange;
         uint256 lastSize;
+        bool isPrivate;
+        address[] allowedUsers;
     }
 
     struct UserDetail {
@@ -80,7 +82,9 @@ contract SimpleStorage {
         uint256 _fileSize,
         string memory _fileType,
         string memory _fileName,
-        string memory _fileDescription
+        string memory _fileDescription,
+        bool filePrivacy,
+        address[] memory allowedFileUsers
     ) public {
         // Make sure the file hash exists
         require(bytes(_fileHash).length > 0);
@@ -122,7 +126,9 @@ contract SimpleStorage {
             block.timestamp,
             msg.sender,
             0,
-            0
+            0,
+            filePrivacy,
+            allowedFileUsers
         );
 
         Transaction memory temp;
@@ -228,25 +234,49 @@ contract SimpleStorage {
         return files[_fileID];
     }
 
-    function deleteFile(uint256[] memory _fileID) public {
-        require(_fileID.length > 0);
-        for (uint256 i = 0; i < _fileID.length; i++) {
-            Transaction memory temp;
-            temp.userAddress = msg.sender;
-            temp.userName = user[msg.sender].name;
-            temp.fileId = _fileID[i];
-            temp.fileName = files[_fileID[i]].fileName;
-            temp.fileHash = files[_fileID[i]].fileHash;
-            temp.fileSize = files[_fileID[i]].fileSize;
-            temp.transactionType = "DELETE";
-            temp.changeLevel = 0;
-            temp.uploadTime = block.timestamp;
+    function deleteFile(uint256 _fileID) public {
+        //require(_fileID.length > 0);
+        // for (uint256 i = 0; i < _fileID.length; i++) {
+        Transaction memory temp;
+        temp.userAddress = msg.sender;
+        temp.userName = user[msg.sender].name;
+        temp.fileId = _fileID;
+        temp.fileName = files[_fileID].fileName;
+        temp.fileHash = files[_fileID].fileHash;
+        temp.fileSize = files[_fileID].fileSize;
+        temp.transactionType = "DELETE";
+        temp.changeLevel = 0;
+        temp.uploadTime = block.timestamp;
+
+        if (files[_fileID].isPrivate == false) {
             transactions.push(temp);
 
             transactionCount++;
-            delete files[_fileID[i]];
+            delete files[_fileID];
             fileNum -= 1;
+        } else if (files[_fileID].isPrivate == true) {
+            if (files[_fileID].uploader == msg.sender) {
+                transactions.push(temp);
+                transactionCount++;
+                delete files[_fileID];
+                fileNum -= 1;
+            } else {
+                for (
+                    uint256 i = 0;
+                    i < files[_fileID].allowedUsers.length;
+                    i++
+                ) {
+                    if (files[_fileID].allowedUsers[i] == msg.sender) {
+                        transactions.push(temp);
+                        transactionCount++;
+                        delete files[_fileID];
+                        fileNum -= 1;
+                    }
+                }
+            }
         }
+
+        // }
     }
 
     // user registration function
