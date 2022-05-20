@@ -431,6 +431,11 @@ button:hover {
   color: #1f298a;
 }
 
+.update-button:disabled {
+  color: #707285;
+  cursor: not-allowed;
+
+}
 .home-file-descriptions {
   display: flex;
   min-width: 1050px;

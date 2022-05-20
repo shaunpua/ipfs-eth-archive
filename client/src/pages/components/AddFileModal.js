@@ -11,9 +11,10 @@ function AddFileModal( {closeModal}) {
     const [description, setDescription] = useState('');
     const [filetype, setfileType] = useState(null);
     const [filename, setfileName] = useState(null);
-    const [filePrivacy, setFilePrivacy] = useState(false);
+    
     const [fullfilename, setFullfilename] = useState(null)
     const [buffer, setBuffer] = useState(null);
+    const [filePrivacy, setFilePrivacy] = useState(false);
     const [selectedUser, setSelectedUser] = useState('');
     const [allowedUsers, setAllowedUsers] = useState([]);
 
@@ -42,13 +43,13 @@ function AddFileModal( {closeModal}) {
             const uploadResult = await ipfs.add(Buffer.from(buffer));
             console.log(uploadResult);
             console.log('ipfs data', uploadResult.path, uploadResult.size);
-
+            
             // if(filetype === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'){
             //     setfileType('.docx');
             // }
 
             console.log('TEST FILETYPE:',filetype)
-
+            setAllowedUsers(allowedUsers => [...allowedUsers, accounts[0]]);
             await contract.methods.uploadFile(uploadResult.path, uploadResult.size, filetype, filename, description, filePrivacy, allowedUsers).send({ from: accounts[0] }).on('transactionHash', (hash) => {
                setBuffer(null);
                setfileType(null);

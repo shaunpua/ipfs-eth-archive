@@ -24,6 +24,8 @@ function HomePage() {
     const [displayDelete, setDisplayDelete] = useState(false);
     const [loggedIn, setLoggedIn] = useState(false);
 
+    const [allowedUserMap, setAllowedUserMap] = useState([])
+
     const [deletedFileID, setDeletedFileID] = useState(null);
   // const [contractname, setContractname] = useState('');
 
@@ -42,6 +44,8 @@ function HomePage() {
           try {
                 const checkLogin = await contract.methods.checkIsUserLogged(accounts[0]).call();
                 console.log(checkLogin, 'LOGIN STATE 1 /home')
+
+               
 
                 await contract.methods.fileIDs().call(function(err,res){
                   setFilecount(res);
@@ -84,13 +88,16 @@ function HomePage() {
       
       for (var i = filecount; i >= 1; i--) {
         const file = await contract.methods.files(i).call();
-        
+        const allowUsers = await contract.methods.getAllowedUsers(file.fileId).call();
         if (file.fileId > 0){
           setFiles(files =>[...files, file]);
+          setAllowedUserMap(allowedUserMap => [...allowedUserMap, {ID: file.fileId, users: allowUsers}])
           setChecked(checked =>[...checked, false]);
         }
         // setFiles(files =>[...files, file]);    
       }
+
+      console.log('FILE blockchain map', files)
 
     }
 
@@ -148,6 +155,47 @@ function HomePage() {
      
     }
 
+    const buttonDisabler =   (privacy, fileID, curuser, uploader) => {
+      if (privacy === false || curuser == uploader) {
+        return false;
+      } else {
+        
+        const foundAllowedUsers = allowedUserMap.filter((user) =>  {
+          return user.ID === fileID  && user.users.includes(curuser)
+        });
+        
+        console.log('found user array', foundAllowedUsers[0])
+        if (foundAllowedUsers[0]) {
+          return false
+        }
+        // if (foundAllowedUsers.length > 0){
+        //   for (let i = 0; foundAllowedUsers[0].users.length; i++){
+        //     if (foundAllowedUsers[0].users[i] === curuser) {
+        //       return false;
+        //     }
+        //   }
+
+        // }
+        
+
+        
+        // if (curuser === foundAllowedUsers[0].users) {
+        //   return false;
+        // }
+        
+
+      
+
+        return true;
+         
+          
+      }
+    }
+
+    const consoleLogger = (file) => {
+      
+    }
+
     // if (typeof contract === 'undefined') {
     //   return <div>Loading Web3, accounts, and contract...</div>;
     // }
@@ -179,10 +227,11 @@ function HomePage() {
               <div className="home-files-container">
                 {files.map((file, key) => {
                   return (<div className="file-section">
-                    <button className="update-button" onClick={()=> {
+                    <button  disabled={buttonDisabler(file.isPrivate, file.fileId, accounts[0], file.uploader)} className="update-button" onClick={()=> {
                     // setDeletedID(deletedID =>[...deletedID, file.fileId]);
                     setDeletedFileID(file.fileId);
                     setDisplayDelete(true)
+                    
                       
                     }}><IoTrash size="30px" /></button>
                   {/* <input
@@ -192,6 +241,7 @@ function HomePage() {
                       handleOnChange(key, file.fileId)
                     }}
                   /> */}
+                  {/* <p>user {consoleLogger(file)}</p> */}
                   <div className="file-section-item" style={{width: "20px", marginLeft: "10px" }} >{file.fileId}</div>
                   <div className="file-section-item" style={{width: "120px", marginLeft: "5px"}}>{file.fileName}</div>
                   <div className="file-section-item" style={{width: "200px", marginLeft: "15px"}}>{file.fileDescription}</div>
@@ -213,7 +263,7 @@ function HomePage() {
                             target="_blank">
                             {file.fileHash.substring(0,10)}...
                           </a></div>
-                  <button className="update-button" onClick={()=> {
+                  <button  className="update-button" onClick={()=> {
                     setUpdatemodal(true)
                     setFileID(file.fileId)
                     }}><IoSync  size="30px" /></button>

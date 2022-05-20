@@ -330,4 +330,13 @@ contract SimpleStorage {
     function getAllTransactions() public view returns (Transaction[] memory) {
         return transactions;
     }
+
+    function getAllowedUsers(uint256 fileID)
+        public
+        view
+        returns (address[] memory)
+    {
+        address[] memory gottenAllowedUsers;
+        return gottenAllowedUsers = files[fileID].allowedUsers;
+    }
 }
