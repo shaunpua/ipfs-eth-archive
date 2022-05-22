@@ -63,10 +63,11 @@ app.post("/dlDocxFile",async(req,res)=>{
     filecontents=cleanString(filecontents);
     console.log("to be sent data: "+filecontents)
     fs.unlink(filelocation, function(){
-        console.log("File was deleted") // Callback
+        console.log("File was deleted") 
     });
     res.send({filecontents:filecontents})
 })
+
 app.post("/dlPDFFile",async(req,res)=>{
     var url=req.body.fileURL;
     console.log("dl url: "+url);
@@ -102,15 +103,13 @@ app.post("/dlPDFFile",async(req,res)=>{
     filecontents=cleanString(filecontents);
     console.log("to be sent data: "+filecontents)
     fs.unlink(filelocation, function(){
-        console.log("File was deleted") // Callback
+        console.log("File was deleted") 
     });
     res.send({filecontents:filecontents})
 
 })
 
-/*<!> TESTING HERE FOR NON UTF8 READS*/
 function chunk(s, maxBytes) {
-    //! https://nodejs.org/api/buffer.html#buffer_buf_slice_start_end
     /*
       buf.slice([start[, end]])
       start <integer> Where the new Buffer will start. Default: 0.
@@ -131,8 +130,9 @@ function chunk(s, maxBytes) {
       endChunkByte >= buf.length ? readBuffer = false : ""
   
       // addr: the position of the first bytes.  raw: the chunk of x bytes
-      result.push({"addr":startChunkByte,"raw":buf.slice(startChunkByte, endChunkByte).toString('hex')});
-  
+      result.push({"addr":startChunkByte,"raw":buf.slice(startChunkByte, endChunkByte).toString()});
+    //result.push({"addr":startChunkByte,"raw":buf.slice(startChunkByte, endChunkByte).toString('hex')});
+
       startChunkByte = endChunkByte
       endChunkByte = startChunkByte + maxBytes
     }
@@ -160,20 +160,15 @@ app.post("/dlnonUTF",async(req,res)=>{
     }
     console.log("dl file path: "+filelocation);
     var dataBuffer = fs.readFileSync(filelocation);
-    
-         
     var filecontents=await chunk(dataBuffer, 512)
-    //must determine if itis possible to reach HERE
-    
- 
+   
     console.log("to be sent data: "+filecontents)
     fs.unlink(filelocation, function(){
-        console.log("File was deleted") // Callback
+        console.log("File was deleted") 
     });
     res.send({filecontents:filecontents})
-
 })
-/*<!> TESTING HERE FOR NON UTF8 READS*/
+
 app.listen(3001,()=>{
     console.log("Server runs on port 3001");
 });
