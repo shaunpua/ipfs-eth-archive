@@ -251,6 +251,7 @@ function HomePage() {
                   </div>
                   <div className="file-section-item" style={{width: "60px", marginLeft: "10px"}}>{convertBytes(file.fileSize)}</div>
                   <div className="file-section-item" style={{width: "150px", marginLeft: "10px"}}>{moment.unix(file.uploadTime).format('h:mm:ss A M/D/Y')}</div>
+                  {/* <div className="file-section-item" style={{width: "120px", marginLeft: "5px"}}>{file.uploaderName}</div> */}
                   <div className="file-section-item" style={{width: "110px", marginLeft: "10px"}}><a
                             href={"https://etherscan.io/address/" + file.uploader}
                             rel="noopener noreferrer"

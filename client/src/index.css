@@ -418,6 +418,12 @@ button:hover {
 
 .allowed-users {
   display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.allowed-users p{
+  font-size: 0.75rem;
 }
 
 .update-button {

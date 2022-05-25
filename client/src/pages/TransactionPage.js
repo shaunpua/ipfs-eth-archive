@@ -86,7 +86,7 @@ function TransactionPage() {
                   <p style={{width: "80px", marginLeft: "30px"}}>File Name</p>
                   <p style={{width: "80px", marginLeft: "85px"}}>File Hash</p>
                   <p style={{width: "70px", marginLeft: "50px"}}>File Size</p>
-                  <p style={{width: "80px", marginLeft: "20px"}}>Uploader</p>
+                  <p style={{width: "80px", marginLeft: "20px"}}>User</p>
                   <p style={{width: "80px", marginLeft: "30px"}}>Address</p>
                   <p style={{width: "60px", marginLeft: "30px"}}> Type</p>
                   <p style={{width: "120px", marginLeft: "30px"}}>Upload Date</p>

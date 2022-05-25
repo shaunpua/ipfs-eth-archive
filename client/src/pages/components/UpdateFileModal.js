@@ -21,6 +21,8 @@ function UpdateFileModal(props) {
     const [filedata, setFiledata] = useState(null);
     const [filetype, setfileType] = useState(null);
     const [filename, setfileName] = useState(null);
+    const [description, setDescription] = useState('');
+    const [descriptionF, setDescriptionF] = useState('');
     const [fullfilename, setFullfilename] = useState(null)
     const [buffer, setBuffer] = useState(null);
 
@@ -47,6 +49,7 @@ function UpdateFileModal(props) {
                 const fileDataPrivacy = await contract.methods.files(props.fileIndex).call();
                 setFilePrivacy(fileDataPrivacy.isPrivate);
                 setAllowedUsers(allowUsers);
+                setDescription(fileDataPrivacy.fileDescription);
                 
 
             } catch (err) {
@@ -107,7 +110,7 @@ function UpdateFileModal(props) {
 
              let contents_new = ""
              //tmp=0 for comapring files using utf=8 tmp=1 for comparing them based on binary/hex
-             var tmp=0;
+             var tmp=1;
              if(tmp==0){
                 if(file_ext_new==="txt"){
                     for await(const item of ipfs.cat(uploadResult.path)){
@@ -259,8 +262,8 @@ function UpdateFileModal(props) {
             console.log("Largest file len: "+largestfile_len);
             EditNum=EditNum/largestfile_len*100;
             console.log("EditDistance or percentage of file changed is:"+EditNum );
-
-            await contract.methods.updateFile(uploadResult.path, uploadResult.size, filetype, filename, props.fileIndex,changesNum, largestfile_len, filePrivacy, allowedUsers).send({ from: accounts[0] }).on('transactionHash', (hash) => {
+            let newDescription = description;
+            await contract.methods.updateFile(uploadResult.path, uploadResult.size, filetype, filename, props.fileIndex,changesNum, largestfile_len, filePrivacy, allowedUsers, newDescription).send({ from: accounts[0] }).on('transactionHash', (hash) => {
                 setBuffer(null);
                 setfileType(null);
                 setfileName(null);
@@ -319,11 +322,22 @@ function UpdateFileModal(props) {
             <form  className="modal-form" onSubmit={updateFile}>
                 
                 <div className="form-input">
+
+                <input 
+                    type="text" 
+                    required 
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    className="auth-input"
+                    placeholder="Enter Description"
+                    />
+                <br />
                     {selectDisable && <input
                 type="file"
                 accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, .txt, application/pdf"
                 onChange={captureFile}
                 />}
+                
                 {fullfilename}
                 </div>
 

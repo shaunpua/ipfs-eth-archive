@@ -48,8 +48,11 @@ function AddFileModal( {closeModal}) {
             //     setfileType('.docx');
             // }
 
+            const userName = await contract.methods.checkUserName(accounts[0]).call();
+            
+            
             console.log('TEST FILETYPE:',filetype)
-            setAllowedUsers(allowedUsers => [...allowedUsers, accounts[0]]);
+            // setAllowedUsers(allowedUsers => [...allowedUsers, accounts[0]]);
             await contract.methods.uploadFile(uploadResult.path, uploadResult.size, filetype, filename, description, filePrivacy, allowedUsers).send({ from: accounts[0] }).on('transactionHash', (hash) => {
                setBuffer(null);
                setfileType(null);

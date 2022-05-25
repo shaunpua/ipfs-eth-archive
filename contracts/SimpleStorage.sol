@@ -175,7 +175,8 @@ contract SimpleStorage {
         uint256 _changeValue,
         uint256 _lastSize,
         bool filePrivacy,
-        address[] memory allowedFileUsers
+        address[] memory allowedFileUsers,
+        string memory _fileDescription
     ) public {
         // Make sure the file hash exists
         require(bytes(_fileHash).length > 0);
@@ -211,6 +212,7 @@ contract SimpleStorage {
         files[_fileID].lastSize = _lastSize;
         files[_fileID].isPrivate = filePrivacy;
         files[_fileID].allowedUsers = allowedFileUsers;
+        files[_fileID].fileDescription = _fileDescription;
 
         Transaction memory temp;
         temp.userAddress = msg.sender;
