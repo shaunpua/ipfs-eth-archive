@@ -1,5 +1,6 @@
 import React, {useContext, useState, useEffect} from "react";
 import BlockchainContext from "../../BlockchainContext";
+import { IoAddCircle, IoRemoveCircleSharp } from "react-icons/io5";
 //const Axios = require('axios');
 import Axios from "axios";
 
@@ -23,6 +24,10 @@ function UpdateFileModal(props) {
     const [fullfilename, setFullfilename] = useState(null)
     const [buffer, setBuffer] = useState(null);
 
+    const [filePrivacy, setFilePrivacy] = useState(false);
+    const [selectedUser, setSelectedUser] = useState('');
+    const [allowedUsers, setAllowedUsers] = useState([]);
+
     //button disable states
     const [updateDisable, setUpdateDisable] = useState(false);
     const [selectDisable, setSelectDisable] = useState(true);
@@ -34,9 +39,31 @@ function UpdateFileModal(props) {
     const [file_ext_new, setfileExtNew] = useState(null);
 
     useEffect(() => {
+
+        const load = async () => {
+            try {
+
+                const allowUsers = await contract.methods.getAllowedUsers(props.fileIndex).call();
+                const fileDataPrivacy = await contract.methods.files(props.fileIndex).call();
+                setFilePrivacy(fileDataPrivacy.isPrivate);
+                setAllowedUsers(allowUsers);
+                
+
+            } catch (err) {
+
+                console.log(err)
+
+            }
+
+        }
+        load()
+        
+
+        
         console.log('FILE DATA:', filename, filetype);
         console.log('buffer: ', buffer);
         console.log('newfile ext:',file_ext_new);
+
     }, [filetype,filename, buffer,file_ext_new]);
 
 
@@ -164,7 +191,7 @@ function UpdateFileModal(props) {
             EditNum=EditNum/largestfile_len*100;
             console.log("EditDistance or percentage of file changed is:"+EditNum );
 
-            await contract.methods.updateFile(uploadResult.path, uploadResult.size, filetype, filename, props.fileIndex,changesNum, largestfile_len).send({ from: accounts[0] }).on('transactionHash', (hash) => {
+            await contract.methods.updateFile(uploadResult.path, uploadResult.size, filetype, filename, props.fileIndex,changesNum, largestfile_len, filePrivacy, allowedUsers).send({ from: accounts[0] }).on('transactionHash', (hash) => {
                 setBuffer(null);
                 setfileType(null);
                 setfileName(null);
@@ -178,6 +205,37 @@ function UpdateFileModal(props) {
             closeModalFunc();
         }  
         
+    }
+
+    const addAllowedUser = (e) => {
+        e.preventDefault()
+        if (selectedUser != '' || selectedUser != 'blank') {
+            setAllowedUsers(allowedUsers => [...allowedUsers, selectedUser]);
+            setSelectedUser('blank');
+
+        }
+                             
+
+    }
+
+    const removeAllowedUser = (e, user) => {
+        e.preventDefault()
+        const updatedAllowedUsers = allowedUsers.filter((id) => {
+            return id != user;
+          })
+  
+        setAllowedUsers(updatedAllowedUsers);
+                             
+
+    }
+
+    const fileDataPrivacyInitializer = async () => {
+
+        const fileDataPrivacy = await contract.methods.files(props.fileIndex).call();
+
+        console.log('PRIVACY', fileDataPrivacy.isPrivate)
+        return fileDataPrivacy.isPrivate;
+
     }
 
     
@@ -199,6 +257,44 @@ function UpdateFileModal(props) {
                 />}
                 {fullfilename}
                 </div>
+
+                <p>File Privacy</p>
+                    <input
+                    type="checkbox"
+                    defaultChecked={fileDataPrivacyInitializer()}
+                    onChange={() => {
+                      setFilePrivacy(!filePrivacy)
+                    }}
+                    />
+                    { filePrivacy && 
+                    <div className="private-details"> 
+                        <p>Shared User Address</p>
+                        <input 
+                        type="text" 
+                        required 
+                        value={selectedUser}
+                        onChange={(e) => setSelectedUser(e.target.value)}
+                        className="auth-input"
+                        placeholder="Enter User Address"
+                        />  
+                         <button className="update-button" onClick={(e)=> {
+                             addAllowedUser(e);
+                             
+                         }}><IoAddCircle size="30px" /></button>
+                        
+                    </div>}
+                    {filePrivacy && allowedUsers.map((user, key) => {
+                        return (<div>
+                            <div className="allowed-users">
+                            <p>{user}</p>
+                            <button className="update-button" onClick={(e)=> {
+                             removeAllowedUser(e, user);
+                             
+                         }}><IoRemoveCircleSharp size="30px" /></button>
+                            </div>
+                            
+                        </div>)
+                    }) }
                 
                 <button  disabled={updateDisable} className="register-button">Upload File</button>
             </form>
