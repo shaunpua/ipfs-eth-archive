@@ -263,7 +263,7 @@ function HomePage() {
                             target="_blank">
                             {file.fileHash.substring(0,10)}...
                           </a></div>
-                  <button  className="update-button" onClick={()=> {
+                  <button disabled={buttonDisabler(file.isPrivate, file.fileId, accounts[0], file.uploader)} className="update-button" onClick={()=> {
                     setUpdatemodal(true)
                     setFileID(file.fileId)
                     }}><IoSync  size="30px" /></button>

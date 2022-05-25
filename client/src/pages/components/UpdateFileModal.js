@@ -191,7 +191,7 @@ function UpdateFileModal(props) {
             EditNum=EditNum/largestfile_len*100;
             console.log("EditDistance or percentage of file changed is:"+EditNum );
 
-            await contract.methods.updateFile(uploadResult.path, uploadResult.size, filetype, filename, props.fileIndex,changesNum, largestfile_len).send({ from: accounts[0] }).on('transactionHash', (hash) => {
+            await contract.methods.updateFile(uploadResult.path, uploadResult.size, filetype, filename, props.fileIndex,changesNum, largestfile_len, filePrivacy, allowedUsers).send({ from: accounts[0] }).on('transactionHash', (hash) => {
                 setBuffer(null);
                 setfileType(null);
                 setfileName(null);
