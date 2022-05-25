@@ -105,88 +105,157 @@ function UpdateFileModal(props) {
             console.log(uploadResult);
             console.log('ipfs data', uploadResult.path, uploadResult.size);
 
-            // if(filetype === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'){
-            //     setfileType('.docx');
-            // }
-             //console log the file content of the new updated file
              let contents_new = ""
-             // loop over incoming data
-            if(file_ext_new==="txt"){
-                for await(const item of ipfs.cat(uploadResult.path)){
-                    // turn string buffer to string and append to contents
-                    contents_new += new TextDecoder().decode(item)
+             //tmp=0 for comapring files using utf=8 tmp=1 for comparing them based on binary/hex
+             var tmp=0;
+             if(tmp==0){
+                if(file_ext_new==="txt"){
+                    for await(const item of ipfs.cat(uploadResult.path)){
+                        contents_new += new TextDecoder().decode(item)
+                    }
+                    contents_new=cleanString(contents_new);
+                   
                 }
-                contents_new=cleanString(contents_new);
-                console.log('New File Content:'+contents_new);
-            }
-            else if(file_ext_new==="docx"){
-                await Axios.post("http://localhost:3001/dlDocxFile",{fileURL:uploadResult.path}).then((response)=>{
+                else if(file_ext_new==="docx"){
+                    await Axios.post("http://localhost:3001/dlDocxFile",{fileURL:uploadResult.path}).then((response)=>{
+                
+                        contents_new = response.data.filecontents;
+                    });
+    
+                }
+                else if(file_ext_new==="pdf"){
+                
+                    await Axios.post("http://localhost:3001/dlPDFFile",{fileURL:uploadResult.path}).then((response)=>{
+                
+                        contents_new = response.data.filecontents;
+                    });
             
-                    contents_new = response.data.filecontents;
-                });
- 
-            }
-            else if(file_ext_new==="pdf"){
-               
-                await Axios.post("http://localhost:3001/dlPDFFile",{fileURL:uploadResult.path}).then((response)=>{
+                }
+             }
+             else{
+                await Axios.post("http://localhost:3001/dlnonUTF",{fileURL:uploadResult.path,fileEXT:file_ext_new}).then((response)=>{
                
                     contents_new = response.data.filecontents;
                 });
-        
-            }
+           
+             }
+            console.log('New File Content:'+contents_new);
+    
             const fileData = await contract.methods.files(props.fileIndex).call();
             
             setFiledata(fileData);
             console.log('pulled fila data', fileData.fileHash, fileData.fileName);
             let contents_old = ""
             var oldfileExt=fileData.fileType;
-        
-            console.log("Old file's extension: "+oldfileExt);
-            if(oldfileExt==="text/plain"){
-                for await(const item of ipfs.cat(fileData.fileHash)){
-                    contents_old += new TextDecoder().decode(item)
+            
+            if(tmp==0){
+                if(oldfileExt==="text/plain"){
+                    for await(const item of ipfs.cat(fileData.fileHash)){
+                        contents_old += new TextDecoder().decode(item)
+                    }
+                    contents_old=cleanString(contents_old);
                 }
-                contents_old=cleanString(contents_old);
+                else if(oldfileExt==="application/vnd.openxmlformats-officedocument.wordprocessingml.document"){
+            
+                    await Axios.post("http://localhost:3001/dlDocxFile",{fileURL:fileData.fileHash}).then((response)=>{
+                    
+                        contents_old = response.data.filecontents;
+                    });
+                }
+                else if(oldfileExt==="application/pdf"){
+                
+                    await Axios.post("http://localhost:3001/dlPDFFile",{fileURL:fileData.fileHash}).then((response)=>{
+                    
+                        contents_old = response.data.filecontents;
+                    });
+            
+                }
             }
-            else if(oldfileExt==="application/vnd.openxmlformats-officedocument.wordprocessingml.document"){
-           
-                await Axios.post("http://localhost:3001/dlDocxFile",{fileURL:fileData.fileHash}).then((response)=>{
+            else{
+                
+                if(oldfileExt==="application/pdf"){
+                    var newfileext="pdf";
+                }
+                else if(oldfileExt==="application/vnd.openxmlformats-officedocument.wordprocessingml.document"){
+                    var newfileext="docx";
+                }
+                else if(oldfileExt==="text/plain"){
+                    var newfileext="txt";
+                }
+                //file_ext_new
+                await Axios.post("http://localhost:3001/dlnonUTF",{fileURL:fileData.fileHash,fileEXT:newfileext}).then((response)=>{
                    
                     contents_old = response.data.filecontents;
                 });
             }
-            else if(oldfileExt==="application/pdf"){
-               
-                await Axios.post("http://localhost:3001/dlPDFFile",{fileURL:fileData.fileHash}).then((response)=>{
-                   
-                    contents_old = response.data.filecontents;
-                });
-           
+            
+            if(tmp==0){
+                contents_old=contents_old.toLowerCase();
+                contents_new=contents_new.toLowerCase();
+                //contents_old=contents_old.replace(/(\r\n|\n|\r)/gm, "");
+                //contents_new=contents_new.replace(/(\r\n|\n|\r)/gm, "");
+                contents_old=contents_old.replace(/[\n\r\t]/g, "");
+                contents_new=contents_new.replace(/[\n\r\t]/g, "");
+                //contents_old=contents_old.replace(/\s+/g, ' ').trim();
+                //contents_new=contents_new.replace(/\s+/g, ' ').trim();
+                contents_old=contents_old.split(' ').join('');
+                contents_new=contents_new.split(' ').join('');
             }
-            
-            contents_old=contents_old.toLowerCase();
-            contents_new=contents_new.toLowerCase();
-            //contents_old=contents_old.replace(/(\r\n|\n|\r)/gm, "");
-            //contents_new=contents_new.replace(/(\r\n|\n|\r)/gm, "");
-            contents_old=contents_old.replace(/[\n\r\t]/g, "");
-            contents_new=contents_new.replace(/[\n\r\t]/g, "");
-            //contents_old=contents_old.replace(/\s+/g, ' ').trim();
-            //contents_new=contents_new.replace(/\s+/g, ' ').trim();
-            contents_old=contents_old.split(' ').join('');
-            contents_new=contents_new.split(' ').join('');
-            
-            
             console.log("processed content old: "+contents_old);
             console.log("processed content new: "+contents_new);
             const EditDistance=require("../../EditDistance")
-            var EditNum=EditDistance.levenshtein(contents_old,contents_new);
-            const changesNum=EditNum;
+            if(tmp==0){
+                var EditNum=EditDistance.levenshtein(contents_old,contents_new);
+                var changesNum=EditNum;
+            }
+            else{
+                var EditNum=0;
+                if(contents_old.length>contents_new.length ){
+                     for(let i=0;i<contents_old.length;i++){
+                         if(i>=contents_new.length){
+                            EditNum=EditNum+EditDistance.levenshtein(String(contents_old[i].raw),"");
+                         }
+                         else{
+                            EditNum=EditNum+EditDistance.levenshtein(String(contents_old[i].raw),String(contents_new[i].raw));
+                         }
+                         
+                     }
+
+                 }
+                 else if(contents_old.length<contents_new.length){
+                    for(let i=0;i<contents_new.length;i++){
+                        if(i>=contents_old.length){
+                           EditNum=EditNum+EditDistance.levenshtein("",String(contents_new[i].raw));
+                        }
+                        else{
+                           EditNum=EditNum+EditDistance.levenshtein(String(contents_old[i].raw),String(contents_new[i].raw));
+                        }
+                        
+                    }
+                 }
+                 else if(contents_old.length==contents_new.length){
+                     for(let i=0;i<contents_old.length;i++){
+                        
+                           EditNum=EditNum+EditDistance.levenshtein(String(contents_old[i].raw),String(contents_new[i].raw));
+                    }
+                 }
+                var changesNum=EditNum;
+            }
             console.log("Num of individual changes: "+changesNum);
             var contents_old_len=contents_old.length;
             var contents_new_len=contents_new.length;
             console.log("old content len: "+contents_old_len+"\nnew content len: "+contents_new_len);
             //var largestfile_len=Math.max(contents_old_len,contents_new_len);
-            var largestfile_len=contents_old_len;
+            if(tmp==0){
+                var largestfile_len=contents_old_len;
+            }
+            else{
+                var largestfile_len=0;
+                for(let i=0;i<contents_old.length;i++){
+                    largestfile_len=largestfile_len+contents_old[i].raw.length;
+                }
+            }
+            
             console.log("Largest file len: "+largestfile_len);
             EditNum=EditNum/largestfile_len*100;
             console.log("EditDistance or percentage of file changed is:"+EditNum );

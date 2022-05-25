@@ -1,5 +1,3 @@
-//https://stackoverflow.com/questions/18516942/fastest-general-purpose-levenshtein-javascript-implementation
-//make sure to account for small inconsequential changes like adding spaces removing space making new lines tabbing capitalizing
 function levenshtein(s, t) {
     if (s === t) {
         return 0;
