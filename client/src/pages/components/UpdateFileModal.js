@@ -1,9 +1,8 @@
 import React, {useContext, useState, useEffect} from "react";
 import BlockchainContext from "../../BlockchainContext";
-import { IoAddCircle, IoRemoveCircleSharp } from "react-icons/io5";
 //const Axios = require('axios');
 import Axios from "axios";
-
+const { performance } = require('perf_hooks');
 const ipfsClient = require('ipfs-http-client')
 // const ipfs = ipfsClient.create({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' }) 
 const ipfs = ipfsClient.create('https://ipfs.infura.io:5001/api/v0') 
@@ -21,14 +20,8 @@ function UpdateFileModal(props) {
     const [filedata, setFiledata] = useState(null);
     const [filetype, setfileType] = useState(null);
     const [filename, setfileName] = useState(null);
-    const [description, setDescription] = useState('');
-    const [descriptionF, setDescriptionF] = useState('');
     const [fullfilename, setFullfilename] = useState(null)
     const [buffer, setBuffer] = useState(null);
-
-    const [filePrivacy, setFilePrivacy] = useState(false);
-    const [selectedUser, setSelectedUser] = useState('');
-    const [allowedUsers, setAllowedUsers] = useState([]);
 
     //button disable states
     const [updateDisable, setUpdateDisable] = useState(false);
@@ -41,32 +34,9 @@ function UpdateFileModal(props) {
     const [file_ext_new, setfileExtNew] = useState(null);
 
     useEffect(() => {
-
-        const load = async () => {
-            try {
-
-                const allowUsers = await contract.methods.getAllowedUsers(props.fileIndex).call();
-                const fileDataPrivacy = await contract.methods.files(props.fileIndex).call();
-                setFilePrivacy(fileDataPrivacy.isPrivate);
-                setAllowedUsers(allowUsers);
-                setDescription(fileDataPrivacy.fileDescription);
-                
-
-            } catch (err) {
-
-                console.log(err)
-
-            }
-
-        }
-        load()
-        
-
-        
         console.log('FILE DATA:', filename, filetype);
         console.log('buffer: ', buffer);
         console.log('newfile ext:',file_ext_new);
-
     }, [filetype,filename, buffer,file_ext_new]);
 
 
@@ -107,10 +77,10 @@ function UpdateFileModal(props) {
             const uploadResult = await ipfs.add(Buffer.from(buffer));
             console.log(uploadResult);
             console.log('ipfs data', uploadResult.path, uploadResult.size);
-
+            var startTime = performance.now();
              let contents_new = ""
              //tmp=0 for comapring files using utf=8 tmp=1 for comparing them based on binary/hex
-             var tmp=1;
+             var tmp=0;
              if(tmp==0){
                 if(file_ext_new==="txt"){
                     for await(const item of ipfs.cat(uploadResult.path)){
@@ -207,6 +177,7 @@ function UpdateFileModal(props) {
             console.log("processed content old: "+contents_old);
             console.log("processed content new: "+contents_new);
             const EditDistance=require("../../EditDistance")
+            var startTimeLEV = performance.now();
             if(tmp==0){
                 var EditNum=EditDistance.levenshtein(contents_old,contents_new);
                 var changesNum=EditNum;
@@ -244,6 +215,8 @@ function UpdateFileModal(props) {
                  }
                 var changesNum=EditNum;
             }
+            var endTimeLEV = performance.now();
+            console.log(`Call to get ED took ${endTimeLEV - startTimeLEV} milliseconds`);
             console.log("Num of individual changes: "+changesNum);
             var contents_old_len=contents_old.length;
             var contents_new_len=contents_new.length;
@@ -262,8 +235,9 @@ function UpdateFileModal(props) {
             console.log("Largest file len: "+largestfile_len);
             EditNum=EditNum/largestfile_len*100;
             console.log("EditDistance or percentage of file changed is:"+EditNum );
-            let newDescription = description;
-            await contract.methods.updateFile(uploadResult.path, uploadResult.size, filetype, filename, props.fileIndex,changesNum, largestfile_len, filePrivacy, allowedUsers, newDescription).send({ from: accounts[0] }).on('transactionHash', (hash) => {
+            var endTime = performance.now();
+            console.log(`time to compare docs took ${endTime - startTime} milliseconds`);
+            await contract.methods.updateFile(uploadResult.path, uploadResult.size, filetype, filename, props.fileIndex,changesNum, largestfile_len).send({ from: accounts[0] }).on('transactionHash', (hash) => {
                 setBuffer(null);
                 setfileType(null);
                 setfileName(null);
@@ -279,37 +253,6 @@ function UpdateFileModal(props) {
         
     }
 
-    const addAllowedUser = (e) => {
-        e.preventDefault()
-        if (selectedUser != '' || selectedUser != 'blank') {
-            setAllowedUsers(allowedUsers => [...allowedUsers, selectedUser]);
-            setSelectedUser('blank');
-
-        }
-                             
-
-    }
-
-    const removeAllowedUser = (e, user) => {
-        e.preventDefault()
-        const updatedAllowedUsers = allowedUsers.filter((id) => {
-            return id != user;
-          })
-  
-        setAllowedUsers(updatedAllowedUsers);
-                             
-
-    }
-
-    const fileDataPrivacyInitializer = async () => {
-
-        const fileDataPrivacy = await contract.methods.files(props.fileIndex).call();
-
-        console.log('PRIVACY', fileDataPrivacy.isPrivate)
-        return fileDataPrivacy.isPrivate;
-
-    }
-
     
     return (
         <div className="modal-background">
@@ -322,62 +265,13 @@ function UpdateFileModal(props) {
             <form  className="modal-form" onSubmit={updateFile}>
                 
                 <div className="form-input">
-
-                <input 
-                    type="text" 
-                    required 
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    className="auth-input"
-                    placeholder="Enter Description"
-                    />
-                <br />
                     {selectDisable && <input
                 type="file"
                 accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, .txt, application/pdf"
                 onChange={captureFile}
                 />}
-                
                 {fullfilename}
                 </div>
-
-                <p>File Privacy</p>
-                    <input
-                    type="checkbox"
-                    defaultChecked={fileDataPrivacyInitializer()}
-                    onChange={() => {
-                      setFilePrivacy(!filePrivacy)
-                    }}
-                    />
-                    { filePrivacy && 
-                    <div className="private-details"> 
-                        <p>Shared User Address</p>
-                        <input 
-                        type="text" 
-                        required 
-                        value={selectedUser}
-                        onChange={(e) => setSelectedUser(e.target.value)}
-                        className="auth-input"
-                        placeholder="Enter User Address"
-                        />  
-                         <button className="update-button" onClick={(e)=> {
-                             addAllowedUser(e);
-                             
-                         }}><IoAddCircle size="30px" /></button>
-                        
-                    </div>}
-                    {filePrivacy && allowedUsers.map((user, key) => {
-                        return (<div>
-                            <div className="allowed-users">
-                            <p>{user}</p>
-                            <button className="update-button" onClick={(e)=> {
-                             removeAllowedUser(e, user);
-                             
-                         }}><IoRemoveCircleSharp size="30px" /></button>
-                            </div>
-                            
-                        </div>)
-                    }) }
                 
                 <button  disabled={updateDisable} className="register-button">Upload File</button>
             </form>
