@@ -107,7 +107,7 @@ function UpdateFileModal(props) {
             const uploadResult = await ipfs.add(Buffer.from(buffer));
             console.log(uploadResult);
             console.log('ipfs data', uploadResult.path, uploadResult.size);
-
+            var startTime = performance.now();
              let contents_new = ""
              //tmp=0 for comapring files using utf=8 tmp=1 for comparing them based on binary/hex
              var tmp=1;
@@ -207,6 +207,7 @@ function UpdateFileModal(props) {
             console.log("processed content old: "+contents_old);
             console.log("processed content new: "+contents_new);
             const EditDistance=require("../../EditDistance")
+            var startTimeLEV = performance.now();
             if(tmp==0){
                 var EditNum=EditDistance.levenshtein(contents_old,contents_new);
                 var changesNum=EditNum;
@@ -244,6 +245,9 @@ function UpdateFileModal(props) {
                  }
                 var changesNum=EditNum;
             }
+            var endTimeLEV = performance.now();
+            console.log(`Call to get ED took ${endTimeLEV - startTimeLEV} milliseconds`);
+
             console.log("Num of individual changes: "+changesNum);
             var contents_old_len=contents_old.length;
             var contents_new_len=contents_new.length;
@@ -263,6 +267,9 @@ function UpdateFileModal(props) {
             EditNum=EditNum/largestfile_len*100;
             console.log("EditDistance or percentage of file changed is:"+EditNum );
             let newDescription = description;
+            var endTime = performance.now();
+            console.log(`time to compare docs took ${endTime - startTime} milliseconds`);
+            
             await contract.methods.updateFile(uploadResult.path, uploadResult.size, filetype, filename, props.fileIndex,changesNum, largestfile_len, filePrivacy, allowedUsers, newDescription).send({ from: accounts[0] }).on('transactionHash', (hash) => {
                 setBuffer(null);
                 setfileType(null);
