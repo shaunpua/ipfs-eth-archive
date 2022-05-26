@@ -2,7 +2,7 @@ import React, {useContext, useState, useEffect} from "react";
 import BlockchainContext from "../../BlockchainContext";
 //const Axios = require('axios');
 import Axios from "axios";
-const { performance } = require('perf_hooks');
+//const { performance } = require('perf_hooks');
 const ipfsClient = require('ipfs-http-client')
 // const ipfs = ipfsClient.create({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' }) 
 const ipfs = ipfsClient.create('https://ipfs.infura.io:5001/api/v0') 
