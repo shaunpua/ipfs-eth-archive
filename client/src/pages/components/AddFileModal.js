@@ -72,9 +72,9 @@ function AddFileModal( {closeModal}) {
 
     const addAllowedUser = (e) => {
         e.preventDefault()
-        if (selectedUser != '' || selectedUser != 'blank') {
+        if (selectedUser != '') {
             setAllowedUsers(allowedUsers => [...allowedUsers, selectedUser]);
-            setSelectedUser('blank');
+            setSelectedUser('');
 
         }
                              
@@ -153,7 +153,6 @@ function AddFileModal( {closeModal}) {
                         <p>Shared User Address</p>
                         <input 
                         type="text" 
-                        required 
                         value={selectedUser}
                         onChange={(e) => setSelectedUser(e.target.value)}
                         className="auth-input"

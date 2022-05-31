@@ -89,6 +89,7 @@ function HomePage() {
       for (var i = filecount; i >= 1; i--) {
         const file = await contract.methods.files(i).call();
         const allowUsers = await contract.methods.getAllowedUsers(file.fileId).call();
+        
         if (file.fileId > 0){
           setFiles(files =>[...files, file]);
           setAllowedUserMap(allowedUserMap => [...allowedUserMap, {ID: file.fileId, users: allowUsers}])
@@ -155,8 +156,16 @@ function HomePage() {
      
     }
 
-    const buttonDisabler =   (privacy, fileID, curuser, uploader) => {
-      if (privacy === false || curuser == uploader) {
+    const returnUsername =  (address) => {
+      // const userName = await contract.methods.checkUserName(address).call();
+
+      const userName ="test user1"
+
+      return userName;
+    }
+
+    const buttonDisabler =   (privacy, fileID, curuser, uploader, curaddress) => {
+      if (privacy === false || curaddress == uploader) {
         return false;
       } else {
         
@@ -192,9 +201,7 @@ function HomePage() {
       }
     }
 
-    const consoleLogger = (file) => {
-      
-    }
+    
 
     // if (typeof contract === 'undefined') {
     //   return <div>Loading Web3, accounts, and contract...</div>;
@@ -227,7 +234,7 @@ function HomePage() {
               <div className="home-files-container">
                 {files.map((file, key) => {
                   return (<div className="file-section">
-                    <button  disabled={buttonDisabler(file.isPrivate, file.fileId, accounts[0], file.uploader)} className="update-button" onClick={()=> {
+                    <button  disabled={buttonDisabler(file.isPrivate, file.fileId, userdata, file.uploader, accounts[0])} className="update-button" onClick={()=> {
                     // setDeletedID(deletedID =>[...deletedID, file.fileId]);
                     setDeletedFileID(file.fileId);
                     setDisplayDelete(true)
@@ -243,6 +250,8 @@ function HomePage() {
                   /> */}
                   {/* <p>user {consoleLogger(file)}</p> */}
                   <div className="file-section-item" style={{width: "20px", marginLeft: "10px" }} >{file.fileId}</div>
+                  
+                  
                   <div className="file-section-item" style={{width: "120px", marginLeft: "5px"}}>{file.fileName}</div>
                   <div className="file-section-item" style={{width: "200px", marginLeft: "15px"}}>{file.fileDescription}</div>
                   <div className="file-section-item" style={{width: "80px", marginLeft: "15px"}}>
@@ -264,7 +273,7 @@ function HomePage() {
                             target="_blank">
                             {file.fileHash.substring(0,10)}...
                           </a></div>
-                  <button disabled={buttonDisabler(file.isPrivate, file.fileId, accounts[0], file.uploader)} className="update-button" onClick={()=> {
+                  <button disabled={buttonDisabler(file.isPrivate, file.fileId, userdata, file.uploader, accounts[0])} className="update-button" onClick={()=> {
                     setUpdatemodal(true)
                     setFileID(file.fileId)
                     }}><IoSync  size="30px" /></button>
