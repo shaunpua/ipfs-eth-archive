@@ -21,12 +21,14 @@ function UpdateFileModal(props) {
     const [filedata, setFiledata] = useState(null);
     const [filetype, setfileType] = useState(null);
     const [filename, setfileName] = useState(null);
+    const [fileUploader, setFileUploader] = useState(null);
     const [description, setDescription] = useState('');
     const [descriptionF, setDescriptionF] = useState('');
     const [fullfilename, setFullfilename] = useState(null)
     const [buffer, setBuffer] = useState(null);
 
     const [filePrivacy, setFilePrivacy] = useState(false);
+
     const [selectedUser, setSelectedUser] = useState('');
     const [allowedUsers, setAllowedUsers] = useState([]);
 
@@ -48,6 +50,7 @@ function UpdateFileModal(props) {
                 const allowUsers = await contract.methods.getAllowedUsers(props.fileIndex).call();
                 const fileDataPrivacy = await contract.methods.files(props.fileIndex).call();
                 setFilePrivacy(fileDataPrivacy.isPrivate);
+                setFileUploader(fileDataPrivacy.uploader);
                 setAllowedUsers(allowUsers);
                 setDescription(fileDataPrivacy.fileDescription);
                 
@@ -110,7 +113,7 @@ function UpdateFileModal(props) {
 
              let contents_new = ""
              //tmp=0 for comapring files using utf=8 tmp=1 for comparing them based on binary/hex
-             var tmp=1;
+             var tmp=0;
              if(tmp==0){
                 if(file_ext_new==="txt"){
                     for await(const item of ipfs.cat(uploadResult.path)){
@@ -281,9 +284,9 @@ function UpdateFileModal(props) {
 
     const addAllowedUser = (e) => {
         e.preventDefault()
-        if (selectedUser != '' || selectedUser != 'blank') {
+        if (selectedUser != '' ) {
             setAllowedUsers(allowedUsers => [...allowedUsers, selectedUser]);
-            setSelectedUser('blank');
+            setSelectedUser('');
 
         }
                              
@@ -308,6 +311,14 @@ function UpdateFileModal(props) {
         console.log('PRIVACY', fileDataPrivacy.isPrivate)
         return fileDataPrivacy.isPrivate;
 
+    }
+
+    const ifUploader = (current, uploader) => {
+        if (current !== uploader) {
+            return false
+        }
+
+        return true;
     }
 
     
@@ -340,21 +351,21 @@ function UpdateFileModal(props) {
                 
                 {fullfilename}
                 </div>
-
-                <p>File Privacy</p>
-                    <input
+                {ifUploader(accounts[0], fileUploader) && <p>File Privacy</p>} 
+                
+                {ifUploader(accounts[0], fileUploader) && <input
                     type="checkbox"
                     defaultChecked={fileDataPrivacyInitializer()}
                     onChange={() => {
                       setFilePrivacy(!filePrivacy)
                     }}
-                    />
-                    { filePrivacy && 
+                    />}
+                    
+                    {ifUploader(accounts[0], fileUploader) && filePrivacy && 
                     <div className="private-details"> 
                         <p>Shared User Address</p>
                         <input 
                         type="text" 
-                        required 
                         value={selectedUser}
                         onChange={(e) => setSelectedUser(e.target.value)}
                         className="auth-input"
@@ -366,7 +377,7 @@ function UpdateFileModal(props) {
                          }}><IoAddCircle size="30px" /></button>
                         
                     </div>}
-                    {filePrivacy && allowedUsers.map((user, key) => {
+                    {ifUploader(accounts[0], fileUploader) && filePrivacy && allowedUsers.map((user, key) => {
                         return (<div>
                             <div className="allowed-users">
                             <p>{user}</p>

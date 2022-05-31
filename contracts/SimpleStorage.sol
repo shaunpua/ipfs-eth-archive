@@ -23,7 +23,7 @@ contract SimpleStorage {
         uint256 lastChange;
         uint256 lastSize;
         bool isPrivate;
-        address[] allowedUsers;
+        string[] allowedUsers;
     }
 
     struct UserDetail {
@@ -63,7 +63,7 @@ contract SimpleStorage {
         uint256 lastChange,
         uint256 lastSize,
         bool isPrivate,
-        address[] allowedUsers
+        string[] allowedUsers
     );
 
     event FileUpdated(
@@ -76,7 +76,7 @@ contract SimpleStorage {
         uint256 lastChange,
         uint256 lastSize,
         bool isPrivate,
-        address[] allowedUsers
+        string[] allowedUsers
     );
 
     constructor() public {}
@@ -88,7 +88,7 @@ contract SimpleStorage {
         string memory _fileName,
         string memory _fileDescription,
         bool filePrivacy,
-        address[] memory allowedFileUsers
+        string[] memory allowedFileUsers
     ) public {
         // Make sure the file hash exists
         require(bytes(_fileHash).length > 0);
@@ -175,7 +175,7 @@ contract SimpleStorage {
         uint256 _changeValue,
         uint256 _lastSize,
         bool filePrivacy,
-        address[] memory allowedFileUsers,
+        string[] memory allowedFileUsers,
         string memory _fileDescription
     ) public {
         // Make sure the file hash exists
@@ -261,33 +261,37 @@ contract SimpleStorage {
         temp.changeLevel = 0;
         temp.uploadTime = block.timestamp;
 
-        if (files[_fileID].isPrivate == false) {
-            transactions.push(temp);
+        transactionCount++;
+        delete files[_fileID];
+        fileNum -= 1;
 
-            transactionCount++;
-            delete files[_fileID];
-            fileNum -= 1;
-        } else if (files[_fileID].isPrivate == true) {
-            if (files[_fileID].uploader == msg.sender) {
-                transactions.push(temp);
-                transactionCount++;
-                delete files[_fileID];
-                fileNum -= 1;
-            } else {
-                for (
-                    uint256 i = 0;
-                    i < files[_fileID].allowedUsers.length;
-                    i++
-                ) {
-                    if (files[_fileID].allowedUsers[i] == msg.sender) {
-                        transactions.push(temp);
-                        transactionCount++;
-                        delete files[_fileID];
-                        fileNum -= 1;
-                    }
-                }
-            }
-        }
+        // if (files[_fileID].isPrivate == false) {
+        //     transactions.push(temp);
+
+        //     transactionCount++;
+        //     delete files[_fileID];
+        //     fileNum -= 1;
+        // } else if (files[_fileID].isPrivate == true) {
+        //     if (files[_fileID].uploader == msg.sender) {
+        //         transactions.push(temp);
+        //         transactionCount++;
+        //         delete files[_fileID];
+        //         fileNum -= 1;
+        //     } else {
+        //         for (
+        //             uint256 i = 0;
+        //             i < files[_fileID].allowedUsers.length;
+        //             i++
+        //         ) {
+        //             if (files[_fileID].allowedUsers[i] == msg.sender) {
+        //                 transactions.push(temp);
+        //                 transactionCount++;
+        //                 delete files[_fileID];
+        //                 fileNum -= 1;
+        //             }
+        //         }
+        //     }
+        // }
 
         // }
     }
@@ -347,9 +351,9 @@ contract SimpleStorage {
     function getAllowedUsers(uint256 fileID)
         public
         view
-        returns (address[] memory)
+        returns (string[] memory)
     {
-        address[] memory gottenAllowedUsers;
+        string[] memory gottenAllowedUsers;
         return gottenAllowedUsers = files[fileID].allowedUsers;
     }
 }
