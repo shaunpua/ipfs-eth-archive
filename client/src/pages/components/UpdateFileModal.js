@@ -363,13 +363,13 @@ function UpdateFileModal(props) {
                     
                     {ifUploader(accounts[0], fileUploader) && filePrivacy && 
                     <div className="private-details"> 
-                        <p>Shared User Address</p>
+                        <p>Shared Users</p>
                         <input 
                         type="text" 
                         value={selectedUser}
                         onChange={(e) => setSelectedUser(e.target.value)}
                         className="auth-input"
-                        placeholder="Enter User Address"
+                        placeholder="Enter Username"
                         />  
                          <button className="update-button" onClick={(e)=> {
                              addAllowedUser(e);

@@ -1,5 +1,5 @@
 import React,  {useState, useEffect, useContext} from "react";
-import {useNavigate } from "react-router-dom";
+import {Link, useNavigate } from "react-router-dom";
 import BlockchainContext from "../BlockchainContext";
 import NavBar2 from "./components/Navbar2"
 import Sidebar from "./components/Sidebar";
@@ -7,7 +7,7 @@ import AddFileModal from "./components/AddFileModal";
 import UpdateFileModal from "./components/UpdateFileModal";
 import { convertBytes } from '../extraFunctions';
 import moment from 'moment'
-import { IoSync, IoTrash} from "react-icons/io5";
+import { IoSync, IoTrash, IoFileTrayFull} from "react-icons/io5";
 
 
 function HomePage() {
@@ -216,9 +216,10 @@ function HomePage() {
             <div className="home-content">
             
               <h2>ArchStorage / All Files</h2>
-              <h3>File count: {fileNum}</h3>
-              <h3>Total added files are: {filecount}</h3>
-              <h3>user name  is: {userdata}</h3>
+              <p>Welcome, {userdata}</p>
+              <p>Current File Count: {fileNum}</p>
+              <p>Total Added Files: {filecount}</p>
+              
               <button className="upload-button" onClick={()=> {setOpenmodal(true)}}>Create +</button>
               <div className="home-file-descriptions">
                   <p style={{width: "20px", marginLeft: "25px"}}>ID</p>
@@ -233,14 +234,9 @@ function HomePage() {
               
               <div className="home-files-container">
                 {files.map((file, key) => {
-                  return (<div className="file-section">
-                    <button  disabled={buttonDisabler(file.isPrivate, file.fileId, userdata, file.uploader, accounts[0])} className="update-button" onClick={()=> {
-                    // setDeletedID(deletedID =>[...deletedID, file.fileId]);
-                    setDeletedFileID(file.fileId);
-                    setDisplayDelete(true)
+                  return (<div className="file-section" >
+                    <button className="update-button" onClick={() => navigate(`/file/${file.fileId}`)}><IoFileTrayFull size="30px" /></button>
                     
-                      
-                    }}><IoTrash size="30px" /></button>
                   {/* <input
                     type="checkbox"
                     checked={checked[key]}
@@ -277,6 +273,13 @@ function HomePage() {
                     setUpdatemodal(true)
                     setFileID(file.fileId)
                     }}><IoSync  size="30px" /></button>
+                    <button  disabled={buttonDisabler(file.isPrivate, file.fileId, userdata, file.uploader, accounts[0])} className="update-button" onClick={()=> {
+                    // setDeletedID(deletedID =>[...deletedID, file.fileId]);
+                    setDeletedFileID(file.fileId);
+                    setDisplayDelete(true)
+                    
+                      
+                    }}><IoTrash size="30px" /></button>
                   {editPercent(file.lastChange,file.lastSize)==0 ? <div  className="file-section-lvdot"></div>: null }  
                   {editPercent(file.lastChange,file.lastSize) > 0 && editPercent(file.lastChange,file.lastSize) < 10 ? <div  className="file-section-lvdot" style={{backgroundColor: "green"}}></div>: null }
                   {editPercent(file.lastChange,file.lastSize) >= 10 && editPercent(file.lastChange,file.lastSize) < 50 ? <div  className="file-section-lvdot" style={{backgroundColor: "#ffd105"}}></div>: null } 
@@ -294,7 +297,7 @@ function HomePage() {
                 <div className="modal-container">
                 <button className="modal-close-button" onClick={()=> {setDisplayDelete(false)}}> X </button>
                 <div className="modal-title">
-                    <h1>Delete Selected Files ({deletedID.length})</h1>
+                    <h1>Delete Selected File ID: {deletedFileID}</h1>
                     <h2>Are you sure?</h2>
                 </div>
                 

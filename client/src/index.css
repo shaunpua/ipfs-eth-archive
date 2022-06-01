@@ -412,8 +412,18 @@ button:hover {
   background-color: #5c6ae4;
 }
 
+.upload-button:disabled {
+  background-color: #707285;
+  cursor: not-allowed;
+}
+
+
+
 .private-details {
   display: flex;
+  
+  justify-content: space-between;
+
 }
 
 .allowed-users {
@@ -423,7 +433,7 @@ button:hover {
 }
 
 .allowed-users p{
-  font-size: 0.75rem;
+  font-size: 1rem;
 }
 
 .update-button {
@@ -511,4 +521,22 @@ button:hover {
 .TransactionPage {
   display: flex;
   flex-direction: column;
+}
+
+.filepage-content {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.filepage-content p{
+  
+  margin-top: 8px;
+  
+}
+
+.filepage-change {
+  display: flex;
 }
