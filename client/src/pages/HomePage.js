@@ -18,6 +18,7 @@ function HomePage() {
     // deletedID not used 
     const [deletedID, setDeletedID] = useState([]);
     const [userdata, setUserdata] = useState(null);
+    const [ethAmount, setEthAmount] = useState(0);
     const [fileID, setFileID] = useState(null);
     const [openmodal, setOpenmodal] = useState(false);
     const [updatemodal, setUpdatemodal] = useState(false);
@@ -45,8 +46,9 @@ function HomePage() {
                 const checkLogin = await contract.methods.checkIsUserLogged(accounts[0]).call();
                 console.log(checkLogin, 'LOGIN STATE 1 /home')
 
-               
-
+               let ethBalance = await web3.eth.getBalance(accounts[0]);
+                ethBalance = ethBalance/1000000000000000000
+               setEthAmount(ethBalance.toFixed(4));
                 await contract.methods.fileIDs().call(function(err,res){
                   setFilecount(res);
                   
@@ -219,6 +221,7 @@ function HomePage() {
               <p>Welcome, {userdata}</p>
               <p>Current File Count: {fileNum}</p>
               <p>Total Added Files: {filecount}</p>
+              <p>Your ETH balance: {ethAmount}</p>
               
               <button className="upload-button" onClick={()=> {setOpenmodal(true)}}>Create +</button>
               <div className="home-file-descriptions">

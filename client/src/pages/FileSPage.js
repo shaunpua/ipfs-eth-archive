@@ -25,10 +25,6 @@ function FileSPage() {
     const [fileAllowedUsers, setFileAllowedUsers] = useState([]);
     const [filePrivacy, setFilePrivacy] = useState(false);
 
-
-    const [selectedUser, setSelectedUser] = useState('');
-    const [allowedUsers, setAllowedUsers] = useState([]);
-
     const [updatemodal, setUpdatemodal] = useState(false);
     const [displayDelete, setDisplayDelete] = useState(false);
     const [deletedFileID, setDeletedFileID] = useState(null);
@@ -84,10 +80,7 @@ function FileSPage() {
                 console.log(err)
                 
             }
-
-        // setFiles([]);
-        // await loadFiles(); 
-    
+ 
         }
         if (typeof web3 !== 'undefined' && typeof accounts !== 'undefined' && typeof contract !== 'undefined') {
           load()
@@ -125,25 +118,12 @@ function FileSPage() {
         if (privacy === false || curaddress == uploader) {
           return false;
         } else {
-          
-        //   const foundAllowedUsers = fileAllowedUsers.filter((user) =>  {
-        //     return user.ID === fileID  && user.users.includes(curuser)
-        //   });
-          
-        //   console.log('found user array', foundAllowedUsers[0])
-        //   if (foundAllowedUsers[0]) {
-        //     return false
-        //   }
 
             if (fileAllowedUsers.includes(curuser) === true) {
                 return false;
             }
-          
-        
-  
           return true;
-           
-            
+       
         }
       }
 
