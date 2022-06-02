@@ -31,7 +31,8 @@ function Navbar2() {
         <div className="nav-home">
             
             <div className="nav-home-left">
-                <img className="nav-home-logo"src={process.env.PUBLIC_URL + 'logo.png'} /> 
+                <img className="nav-home-logo" src={`${process.env.PUBLIC_URL}/logo.png`}  /> 
+                {/* <img className="nav-home-logo"src={process.env.PUBLIC_URL + 'logo.png'} />  */}
                 <h2 className="nav-home-title">ArchStorage</h2>
                 
             </div>
