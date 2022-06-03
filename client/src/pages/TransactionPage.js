@@ -1,10 +1,11 @@
 import React,  {useState, useEffect, useContext} from "react";
-import {useNavigate } from "react-router-dom";
+import {useNavigate, Link } from "react-router-dom";
 import BlockchainContext from "../BlockchainContext";
 import NavBar2 from "./components/Navbar2"
 import Sidebar from "./components/Sidebar";
 import { convertBytes } from '../extraFunctions';
 import moment from 'moment'
+import { IoReceipt} from "react-icons/io5";
 
 function TransactionPage() {
     const [transactions, setTransactions] = useState([]);
@@ -97,6 +98,7 @@ function TransactionPage() {
               <div className="home-files-container">
               {transactions.map((transaction, key) => {
                   return (<div className="file-section">
+                    <button className="update-button" onClick={() => navigate(`/transaction/${key}`)}><IoReceipt size="30px" /></button>
                   <div className="file-section-item" style={{width: "40px", marginLeft: "10px" }}>{transaction.fileId}</div>
                   <div className="file-section-item" style={{width: "150px", marginLeft: "10px" }}>{transaction.fileName}</div>
                   <div className="file-section-item" style={{width: "120px", marginLeft: "10px" }} ><a

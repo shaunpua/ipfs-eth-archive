@@ -9,6 +9,7 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import HomePage from "./pages/HomePage";
 import TransactionPage from "./pages/TransactionPage";
+import TransactionSPage from "./pages/TransactionSPage";
 import FileSPage from "./pages/FileSPage";
 // import NavbarAuth from "./pages/NavbarAuth";
 
@@ -95,6 +96,7 @@ function App() {
             <Route path="/login" element={<LoginPage/>}/>
             <Route path="/register" element={<RegisterPage/>}/>
             <Route path="/file/:fileid" element={<FileSPage/>}/>
+            <Route path="/transaction/:transactionid" element={<TransactionSPage/>}/>
             <Route path="/transactions" element={<TransactionPage/>}/>
             <Route exact path="*" element={<p>Error no page found</p>}/>
               
