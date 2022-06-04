@@ -260,7 +260,7 @@ contract SimpleStorage {
         temp.transactionType = "DELETE";
         temp.changeLevel = 0;
         temp.uploadTime = block.timestamp;
-
+        transactions.push(temp);
         transactionCount++;
         delete files[_fileID];
         fileNum -= 1;
