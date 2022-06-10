@@ -94,8 +94,7 @@ function UpdateFileModal(props) {
             const fileNameFilter = file.name.split(".")
             setFullfilename(file.name)
             setfileName(fileNameFilter[0]);
-            var fileExtVal=file.name.split(".");
-            setfileExtNew(fileExtVal[1]);
+            setfileExtNew(file.type);
             setSelectDisable(false);
             
         }
@@ -110,26 +109,25 @@ function UpdateFileModal(props) {
             const uploadResult = await ipfs.add(Buffer.from(buffer));
             console.log(uploadResult);
             console.log('ipfs data', uploadResult.path, uploadResult.size);
-
              let contents_new = ""
              //tmp=0 for comapring files using utf=8 tmp=1 for comparing them based on binary/hex
              var tmp=0;
              if(tmp==0){
-                if(file_ext_new==="txt"){
+                if(file_ext_new==="text/plain"){
                     for await(const item of ipfs.cat(uploadResult.path)){
                         contents_new += new TextDecoder().decode(item)
                     }
                     contents_new=cleanString(contents_new);
                    
                 }
-                else if(file_ext_new==="docx"){
+                else if(file_ext_new==="application/vnd.openxmlformats-officedocument.wordprocessingml.document"){
                     await Axios.post("http://localhost:3001/dlDocxFile",{fileURL:uploadResult.path}).then((response)=>{
                 
                         contents_new = response.data.filecontents;
                     });
     
                 }
-                else if(file_ext_new==="pdf"){
+                else if(file_ext_new==="application/pdf"){
                 
                     await Axios.post("http://localhost:3001/dlPDFFile",{fileURL:uploadResult.path}).then((response)=>{
                 
@@ -139,12 +137,22 @@ function UpdateFileModal(props) {
                 }
              }
              else{
-                await Axios.post("http://localhost:3001/dlnonUTF",{fileURL:uploadResult.path,fileEXT:file_ext_new}).then((response)=>{
-               
+                
+                if(file_ext_new==="application/pdf"){
+                    var newfileext="pdf";
+                }
+                else if(file_ext_new==="application/vnd.openxmlformats-officedocument.wordprocessingml.document"){
+                    var newfileext="docx";
+                }
+                else if(file_ext_new==="text/plain"){
+                    var newfileext="txt";
+                }
+                //file_ext_new
+                await Axios.post("http://localhost:3001/dlnonUTF",{fileURL:uploadResult.path,fileEXT:newfileext}).then((response)=>{
+                   
                     contents_new = response.data.filecontents;
                 });
-           
-             }
+            }
             console.log('New File Content:'+contents_new);
     
             const fileData = await contract.methods.files(props.fileIndex).call();
@@ -180,16 +188,16 @@ function UpdateFileModal(props) {
             else{
                 
                 if(oldfileExt==="application/pdf"){
-                    var newfileext="pdf";
+                    var oldfileext="pdf";
                 }
                 else if(oldfileExt==="application/vnd.openxmlformats-officedocument.wordprocessingml.document"){
-                    var newfileext="docx";
+                    var oldfileext="docx";
                 }
                 else if(oldfileExt==="text/plain"){
-                    var newfileext="txt";
+                    var oldfileext="txt";
                 }
-                //file_ext_new
-                await Axios.post("http://localhost:3001/dlnonUTF",{fileURL:fileData.fileHash,fileEXT:newfileext}).then((response)=>{
+                //file_ext_old
+                await Axios.post("http://localhost:3001/dlnonUTF",{fileURL:fileData.fileHash,fileEXT:oldfileext}).then((response)=>{
                    
                     contents_old = response.data.filecontents;
                 });
