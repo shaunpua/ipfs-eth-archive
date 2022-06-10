@@ -24,6 +24,7 @@ function UpdateFileModal(props) {
     const [fileUploader, setFileUploader] = useState(null);
     const [description, setDescription] = useState('');
     const [descriptionF, setDescriptionF] = useState('');
+    const [fileTypeFilter, setFileTypeFilter] = useState(null);
     const [fullfilename, setFullfilename] = useState(null)
     const [buffer, setBuffer] = useState(null);
 
@@ -53,6 +54,13 @@ function UpdateFileModal(props) {
                 setFileUploader(fileDataPrivacy.uploader);
                 setAllowedUsers(allowUsers);
                 setDescription(fileDataPrivacy.fileDescription);
+
+                // const type = fileDataPrivacy.fileType;
+
+                
+                setFileTypeFilter(fileDataPrivacy.fileType)
+               
+                
                 
 
             } catch (err) {
@@ -353,7 +361,8 @@ function UpdateFileModal(props) {
                 <br />
                     {selectDisable && <input
                 type="file"
-                accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, .txt, application/pdf"
+                accept= {fileTypeFilter}
+                // accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, .txt, application/pdf"
                 onChange={captureFile}
                 />}
                 

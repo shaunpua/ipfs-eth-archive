@@ -194,6 +194,10 @@ contract SimpleStorage {
                 keccak256(abi.encodePacked(_fileType)) ==
                 keccak256(abi.encodePacked("application/pdf"))
         );
+        require(
+            keccak256(abi.encodePacked(_fileType)) ==
+                keccak256(abi.encodePacked(files[_fileID].fileType))
+        );
         require(bytes(_fileName).length > 0);
         // Make sure uploader address exists
         require(msg.sender != address(0));
