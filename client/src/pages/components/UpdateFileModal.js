@@ -119,7 +119,7 @@ function UpdateFileModal(props) {
             console.log('ipfs data', uploadResult.path, uploadResult.size);
              let contents_new = ""
              //tmp=0 for comapring files using utf=8 tmp=1 for comparing them based on binary/hex
-             var tmp=0;
+             var tmp=1;
              if(tmp==0){
                 if(file_ext_new==="text/plain"){
                     for await(const item of ipfs.cat(uploadResult.path)){

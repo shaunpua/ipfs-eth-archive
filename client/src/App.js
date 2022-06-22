@@ -11,6 +11,7 @@ import HomePage from "./pages/HomePage";
 import TransactionPage from "./pages/TransactionPage";
 import TransactionSPage from "./pages/TransactionSPage";
 import FileSPage from "./pages/FileSPage";
+import AboutPage from "./pages/AboutPage";
 // import NavbarAuth from "./pages/NavbarAuth";
 
 
@@ -98,6 +99,7 @@ function App() {
             <Route path="/file/:fileid" element={<FileSPage/>}/>
             <Route path="/transaction/:transactionid" element={<TransactionSPage/>}/>
             <Route path="/transactions" element={<TransactionPage/>}/>
+            <Route path="/guide" element={<AboutPage/>}/>
             <Route exact path="*" element={<p>Error no page found</p>}/>
               
           </Routes>

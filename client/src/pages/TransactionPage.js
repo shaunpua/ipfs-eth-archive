@@ -77,7 +77,7 @@ function TransactionPage() {
             <NavBar2/>
             <div className="home-container">
             <Sidebar/>
-            <div className="home-content">
+            <div className="home-content" >
             
               <h2>ArchStorage / Transactions</h2>
               <h3>Transaction count is: {transactionCount}</h3>

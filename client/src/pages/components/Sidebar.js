@@ -6,6 +6,7 @@ function Sidebar() {
         <div className="sidebar">
             <Link  to="/" className="sidebar-link">All Files</Link>
             <Link  to="/transactions" className="sidebar-link">Transactions</Link>
+            <Link  to="/guide" className="sidebar-link">Guide </Link>
             <p className="sidebar-end">Copyright @2021</p>
             
         </div>
